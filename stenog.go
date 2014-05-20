@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	OkJsonMessage     = "{ ok: true }"
-	FailedJsonMessage = "{ ok: false }"
+	OkJsonMessage     = "{ \"ok\": \"true\" }"
+	FailedJsonMessage = "{ \"ok\": \"false\" }"
 	InsertionQuery    = "INSERT INTO messages (room, author, message, at) VALUES (:room, :author, :message, :at)"
 )
 
@@ -52,7 +52,7 @@ func main() {
 	// Setup Martini
 	m := martini.Classic()
 	m.Get("/", sayHello)
-	m.Get("/messages/latest", fetchLatestMessages)
+	m.Get("/api/messages/latest", fetchLatestMessages)
 	m.Post("/api/messages/log", binding.Bind(Message{}), storeMessage)
 	m.Run()
 }
@@ -80,14 +80,12 @@ func fetchLatestMessages(req *http.Request) string {
 
 	messages := []Message{}
 	err := db.Select(&messages, "SELECT * FROM messages ORDER BY at DESC LIMIT 0,"+limit)
-	fmt.Println(messages)
 
-	if err != nil {
+	if err == nil {
 		json, _ := json.Marshal(messages)
 
-		return "{ok:true,limit:" + limit + ",values:" + string(json) + "}"
+		return fmt.Sprintf("{\"ok\":\"true\",\"limit\":\"%s\",\"values\":%s}", limit, string(json))
 	} else {
-		fmt.Println(messages)
 		fmt.Println(err)
 		return FailedJsonMessage
 	}
