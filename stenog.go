@@ -4,13 +4,7 @@ import (
 	"fmt"
 	"github.com/codegangsta/martini-contrib/binding"
 	"github.com/go-martini/martini"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jmoiron/sqlx"
 	"net/http"
-)
-
-const (
-	InsertionQuery = "INSERT INTO messages (room, author, message, at) VALUES (:room, :author, :message, :at)"
 )
 
 func main() {
@@ -20,14 +14,6 @@ func main() {
 	m.Get("/api/messages/latest", fetchLatestMessages)
 	m.Post("/api/messages/log", binding.Bind(Message{}), storeMessage)
 	m.Run()
-}
-
-func fancyDb() *sqlx.DB {
-	db, err := sqlx.Connect("mysql", "root@/witness")
-	if err != nil {
-		fmt.Println("CRAP the db couldn't be connected to.")
-	}
-	return db
 }
 
 func sayHello() string {
@@ -41,10 +27,7 @@ func fetchLatestMessages(req *http.Request) string {
 	}
 	fmt.Println("Fetching latest", limit, "messages")
 
-	db := fancyDb()
-
-	messages := []Message{}
-	err := db.Select(&messages, "SELECT * FROM messages ORDER BY at DESC LIMIT 0,"+limit)
+	messages, err := newDB().LatestMessages(limit)
 
 	if err == nil {
 		return messagesResponseMessage(limit, messages)
@@ -56,13 +39,14 @@ func fetchLatestMessages(req *http.Request) string {
 
 func storeMessage(msg Message) string {
 	fmt.Println("Storing the following message:", msg.String())
-	db := fancyDb()
 
-	ah, err := db.NamedExec(InsertionQuery, msg.ForInsertion())
+	message, err := newDB().InsertMessage(msg)
 
 	if err == nil {
-		fmt.Sprintln(ah)
-		return basicResponseMessage("true")
+		fmt.Println("Inserted message:", message)
+		msgs := []Message{}
+		msgs = append(msgs, message)
+		return messagesResponseMessage("", msgs)
 	} else {
 		fmt.Println(err)
 		return errorMessage(err)
