@@ -1,58 +1,17 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/codegangsta/martini-contrib/binding"
 	"github.com/go-martini/martini"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"html"
 	"net/http"
-	"time"
 )
 
 const (
-	OkJsonMessage     = "{ \"ok\": \"true\" }"
-	FailedJsonMessage = "{ \"ok\": \"false\" }"
-	InsertionQuery    = "INSERT INTO messages (room, author, message, at) VALUES (:room, :author, :message, :at)"
+	InsertionQuery = "INSERT INTO messages (room, author, message, at) VALUES (:room, :author, :message, :at)"
 )
-
-type ResponseMessage struct {
-	OK     string    `json:"ok"`
-	Limit  string    `json:"limit"`
-	Values []Message `json:"values"`
-}
-
-type Message struct {
-	Id         int    `json:"id" db:"id"`
-	Room       string `form:"room" json:"room" db:"room" binding:"required"`
-	Author     string `form:"author" json:"author" db:"author" binding:"required"`
-	Message    string `form:"message" json:"message" db:"message" binding:"required"`
-	At         string `form:"time" json:"time" binding:"required"`
-	unexported string `form:"-"` // skip binding of unexported fields
-}
-
-type Messages []*Message
-
-func (msg *Message) String() string {
-	return "<" + msg.Room + " by " + msg.Author + " at " + msg.At + ": " + msg.Message + ">"
-}
-
-func (msg *Message) ForInsertion() map[string]interface{} {
-	time, err := time.Parse("2006-01-02 15:04:05 -0700", msg.At)
-	if err != nil {
-		fmt.Println(err)
-		return map[string]interface{}{}
-	}
-
-	return map[string]interface{}{
-		"room":    html.EscapeString(msg.Room),
-		"author":  html.EscapeString(msg.Author),
-		"message": html.EscapeString(msg.Message),
-		"at":      time,
-	}
-}
 
 func main() {
 	// Setup Martini
@@ -88,17 +47,10 @@ func fetchLatestMessages(req *http.Request) string {
 	err := db.Select(&messages, "SELECT * FROM messages ORDER BY at DESC LIMIT 0,"+limit)
 
 	if err == nil {
-		response := &ResponseMessage{
-			"true",
-			limit,
-			messages,
-		}
-		resp_json, _ := json.Marshal(response)
-
-		return string(resp_json)
+		return messagesResponseMessage(limit, messages)
 	} else {
 		fmt.Println(err)
-		return FailedJsonMessage
+		return errorMessage(err)
 	}
 }
 
@@ -110,9 +62,9 @@ func storeMessage(msg Message) string {
 
 	if err == nil {
 		fmt.Sprintln(ah)
-		return OkJsonMessage
+		return basicResponseMessage("true")
 	} else {
 		fmt.Println(err)
-		return FailedJsonMessage
+		return errorMessage(err)
 	}
 }
