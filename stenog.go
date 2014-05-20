@@ -18,6 +18,12 @@ const (
 	InsertionQuery    = "INSERT INTO messages (room, author, message, at) VALUES (:room, :author, :message, :at)"
 )
 
+type ResponseMessage struct {
+	OK     string    `json:"ok"`
+	Limit  string    `json:"limit"`
+	Values []Message `json:"values"`
+}
+
 type Message struct {
 	Id         int    `json:"id" db:"id"`
 	Room       string `form:"room" json:"room" db:"room" binding:"required"`
@@ -74,7 +80,7 @@ func fetchLatestMessages(req *http.Request) string {
 	if limit == "" { // no limit
 		limit = "10"
 	}
-	fmt.Println("limit =", limit)
+	fmt.Println("Fetching latest", limit, "messages")
 
 	db := fancyDb()
 
@@ -82,9 +88,14 @@ func fetchLatestMessages(req *http.Request) string {
 	err := db.Select(&messages, "SELECT * FROM messages ORDER BY at DESC LIMIT 0,"+limit)
 
 	if err == nil {
-		json, _ := json.Marshal(messages)
+		response := &ResponseMessage{
+			"true",
+			limit,
+			messages,
+		}
+		resp_json, _ := json.Marshal(response)
 
-		return fmt.Sprintf("{\"ok\":\"true\",\"limit\":\"%s\",\"values\":%s}", limit, string(json))
+		return string(resp_json)
 	} else {
 		fmt.Println(err)
 		return FailedJsonMessage
