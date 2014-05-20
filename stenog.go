@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"github.com/codegangsta/martini-contrib/binding"
@@ -16,6 +15,7 @@ import (
 const (
 	OkJsonMessage     = "{ ok: true }"
 	FailedJsonMessage = "{ ok: false }"
+	InsertionQuery    = "INSERT INTO messages (room, author, message, at) VALUES (:room, :author, :message, :at)"
 )
 
 type Message struct {
@@ -33,6 +33,21 @@ func (msg *Message) String() string {
 	return "<" + msg.Room + " by " + msg.Author + " at " + msg.At + ": " + msg.Message + ">"
 }
 
+func (msg *Message) ForInsertion() map[string]interface{} {
+	time, err := time.Parse("2006-01-02 15:04:05 -0700", msg.At)
+	if err != nil {
+		fmt.Println(err)
+		return map[string]interface{}{}
+	}
+
+	return map[string]interface{}{
+		"room":    html.EscapeString(msg.Room),
+		"author":  html.EscapeString(msg.Author),
+		"message": html.EscapeString(msg.Message),
+		"at":      time,
+	}
+}
+
 func main() {
 	// Setup Martini
 	m := martini.Classic()
@@ -42,16 +57,8 @@ func main() {
 	m.Run()
 }
 
-func newDb() *sql.DB {
-	db, err := sql.Open("mysql", "root@/witness")
-	if err != nil {
-		fmt.Println("CRAP the db couldn't be connected to.")
-	}
-	return db
-}
-
 func fancyDb() *sqlx.DB {
-	db, err := sqlx.Connect("mysql", "dbname=bar")
+	db, err := sqlx.Connect("mysql", "root@/witness")
 	if err != nil {
 		fmt.Println("CRAP the db couldn't be connected to.")
 	}
@@ -88,25 +95,12 @@ func fetchLatestMessages(req *http.Request) string {
 
 func storeMessage(msg Message) string {
 	fmt.Println("Storing the following message:", msg.String())
-	db := newDb()
+	db := fancyDb()
 
-	stmt, err := db.Prepare("INSERT INTO messages (room, author, message, at) VALUES (?, ?, ?, ?)")
-	if err != nil {
-		fmt.Println(err)
-		return FailedJsonMessage
-	}
-	defer stmt.Close() // in reality, you should check this call for error
-
-	time, err := time.Parse("2006-01-02 15:04:05 -0700", msg.At)
-	if err != nil {
-		fmt.Println(err)
-		return FailedJsonMessage
-	}
-
-	res, err := stmt.Exec(html.EscapeString(msg.Room), html.EscapeString(msg.Author), html.EscapeString(msg.Message), time)
+	ah, err := db.NamedExec(InsertionQuery, msg.ForInsertion())
 
 	if err == nil {
-		fmt.Sprintln(res)
+		fmt.Sprintln(ah)
 		return OkJsonMessage
 	} else {
 		fmt.Println(err)
