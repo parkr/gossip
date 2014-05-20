@@ -1,5 +1,6 @@
 #! /bin/bash
 
-go get github.com/go-sql-driver/mysql
-go get github.com/go-martini/martini
-go get github.com/codegangsta/martini-contrib/binding
+echo -e "github.com/codegangsta/martini-contrib/binding \
+github.com/go-martini/martini \
+github.com/go-sql-driver/mysql \
+github.com/jmoiron/sqlx" | xargs go get
