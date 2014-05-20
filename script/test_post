@@ -1,0 +1,6 @@
+#! /bin/bash
+
+DATA="room=%23jekyll&author=Parker%20Moore&message=hello,%20world&time=2014-05-20%2000:55:55%20-0400"
+
+curl -d "$DATA" http://localhost:3000/api/messages/log
+echo
