@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -ex
+
+script/bootstrap
+
+go build

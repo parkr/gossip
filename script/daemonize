@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -ex
+
+LOGFILE="/usr/local/log/gossip.log"
+BINARY="/usr/local/bin/gossip"
+PIDFILE="/var/run/gossip.pid"
+
+script/install
+
+sudo PORT=7483 \
+  daemonize \
+  -e ${LOGFILE} \
+  -o ${LOGFILE} \
+  -a \
+  -p ${PIDFILE} \
+  -l /var/lock/subsys/gossip \
+  -u nobody \
+  ${BINARY}
