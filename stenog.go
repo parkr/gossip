@@ -1,11 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/codegangsta/martini-contrib/binding"
 	"github.com/go-martini/martini"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 func main() {
@@ -25,15 +27,16 @@ func sayHello() string {
 }
 
 func findMessageById(params martini.Params) (int, string) {
-	id := params["id"]
-	if id == nil {
-		return errorResponse(400, "You must submit an ID to lookup.")
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		return errorResponse(400, errors.New("You must submit an ID to lookup."))
 	}
+
 	message, err := newDB().Find(id)
 	if err == nil {
 		return singleMessageResponse(message)
 	} else {
-		fmt.Println("Encountered an error fetching msg id=" + id + ":")
+		fmt.Println("Encountered an error fetching msg id=" + string(id) + ":")
 		log.Fatal(err)
 		return internalErrorResponse(err)
 	}

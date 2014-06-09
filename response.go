@@ -42,13 +42,17 @@ func messagesResponse(limit string, messages []Message) (int, string) {
 	return r.MartiniResp()
 }
 
-func internalErrorResponse(err error) (int, string) {
+func errorResponse(code int, err error) (int, string) {
 	r := &ResponseMessage{
 		"false",
-		500,
+		code,
 		nil,
-		nil,
+		"",
 		err,
 	}
 	return r.MartiniResp()
+}
+
+func internalErrorResponse(err error) (int, string) {
+	return errorResponse(500, err)
 }
