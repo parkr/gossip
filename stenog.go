@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/codegangsta/martini-contrib/binding"
 	"github.com/go-martini/martini"
+	"log"
 	"net/http"
 )
 
@@ -33,7 +34,7 @@ func fetchLatestMessages(req *http.Request) (int, string) {
 		return 200, messagesResponseMessage(limit, messages)
 	} else {
 		fmt.Println("Encountered an error fetching the latest msgs:")
-		fmt.Println(err)
+		log.Fatal(err)
 		return errorMessage(err)
 	}
 }
@@ -49,7 +50,7 @@ func storeMessage(msg Message) (int, string) {
 		msgs = append(msgs, message)
 		return 200, messagesResponseMessage("", msgs)
 	} else {
-		fmt.Println(err)
+		log.Fatal(err)
 		return errorMessage(err)
 	}
 }

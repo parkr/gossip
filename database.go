@@ -30,6 +30,7 @@ func newDB() *DB {
 		fmt.Println("CRAP: couldn't connect to the database.")
 		fmt.Println(err)
 	}
+	//db.Connection = conn.Unsafe()
 	db.Connection = conn
 	return db
 }

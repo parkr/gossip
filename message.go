@@ -11,7 +11,9 @@ type Message struct {
 	Room       string `form:"room" json:"room" db:"room" binding:"required"`
 	Author     string `form:"author" json:"author" db:"author" binding:"required"`
 	Message    string `form:"message" json:"message" db:"message" binding:"required"`
-	At         string `form:"time" json:"time" binding:"required"`
+	At         string `form:"time" json:"time" db:"at" binding:"required"`
+	CreatedAt  string `db:"created_at"`
+	UpdatedAt  string `db:"updated_at"`
 	unexported string `form:"-"` // skip binding of unexported fields
 }
 
