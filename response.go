@@ -25,12 +25,18 @@ func (r *ResponseMessage) Json() string {
 func basicResponseMessage(okVal string) string {
 	r := &ResponseMessage{}
 	r.OK = okVal
+	if okVal == "true" {
+		r.Code = 200
+	} else {
+		r.Code = 500
+	}
 	return r.Json()
 }
 
 func messagesResponseMessage(limit string, messages []Message) string {
 	r := &ResponseMessage{}
 	r.OK = "true"
+	r.Code = 200
 	r.Limit = limit
 	r.Values = messages
 	return r.Json()
