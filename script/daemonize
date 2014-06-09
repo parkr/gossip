@@ -5,10 +5,20 @@ set -ex
 LOGFILE="/usr/local/log/gossip.log"
 BINARY="/usr/local/bin/gossip"
 PIDFILE="/var/run/gossip.pid"
+: ${GOSSIP_DB_USERNAME:=root}
+: ${GOSSIP_DB_PASSWORD:=some-password}
+: ${GOSSIP_DB_DBNAME:=witness}
 
 script/install
 
+if test -f ".env"; then
+  source .env
+fi
+
 sudo PORT=7483 \
+  GOSSIP_DB_DBNAME="${GOSSIP_DB_DBNAME}" \
+  GOSSIP_DB_USERNAME="${GOSSIP_DB_USERNAME}" \
+  GOSSIP_DB_PASSWORD="${GOSSIP_DB_PASSWORD}" \
   daemonize \
   -e ${LOGFILE} \
   -o ${LOGFILE} \
