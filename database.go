@@ -10,7 +10,7 @@ import (
 const (
 	InsertionQuery    = "INSERT INTO messages (room, author, message, at, created_at, updated_at) VALUES (:room, :author, :message, :at, NOW(), NOW())"
 	SelectLatestQuery = "SELECT * FROM messages ORDER BY at DESC LIMIT 0,%s"
-	SelectMessageById = "SELECT * FROM messages WHERE id = $1"
+	SelectMessageById = "SELECT * FROM messages WHERE id = %d"
 )
 
 type DB struct {
@@ -37,7 +37,7 @@ func newDB() *DB {
 
 func (db *DB) Find(id int) (Message, error) {
 	msg := Message{}
-	err := db.Connection.Get(&msg, SelectMessageById, id)
+	err := db.Connection.Get(&msg, fmt.Sprintf(SelectMessageById, id))
 	return msg, err
 }
 
