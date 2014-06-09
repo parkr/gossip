@@ -20,7 +20,7 @@ func sayHello() string {
 	return "Hello, world"
 }
 
-func fetchLatestMessages(req *http.Request) string {
+func fetchLatestMessages(req *http.Request) (int, string) {
 	limit := req.URL.Query().Get("limit")
 	if limit == "" { // no limit
 		limit = "10"
@@ -30,7 +30,7 @@ func fetchLatestMessages(req *http.Request) string {
 	messages, err := newDB().LatestMessages(limit)
 
 	if err == nil {
-		return messagesResponseMessage(limit, messages)
+		return 200, messagesResponseMessage(limit, messages)
 	} else {
 		fmt.Println("Encountered an error fetching the latest msgs:")
 		fmt.Println(err)
@@ -38,7 +38,7 @@ func fetchLatestMessages(req *http.Request) string {
 	}
 }
 
-func storeMessage(msg Message) string {
+func storeMessage(msg Message) (int, string) {
 	fmt.Println("Storing the following message:", msg.String())
 
 	message, err := newDB().InsertMessage(msg)
@@ -47,7 +47,7 @@ func storeMessage(msg Message) string {
 		fmt.Println("Inserted message:", message)
 		msgs := []Message{}
 		msgs = append(msgs, message)
-		return messagesResponseMessage("", msgs)
+		return 200, messagesResponseMessage("", msgs)
 	} else {
 		fmt.Println(err)
 		return errorMessage(err)

@@ -10,6 +10,7 @@ type ResponseMessage struct {
 	Limit  string    `json:"limit"`
 	Values []Message `json:"values"`
 	Error  error     `json:"error"`
+	Code   int       `json:"code"`
 }
 
 func (r *ResponseMessage) Json() string {
@@ -35,9 +36,10 @@ func messagesResponseMessage(limit string, messages []Message) string {
 	return r.Json()
 }
 
-func errorMessage(err error) string {
+func errorMessage(err error) (int, string) {
 	r := &ResponseMessage{}
 	r.OK = "false"
+	r.Code = 500
 	r.Error = err
-	return r.Json()
+	return r.Code, r.Json()
 }
