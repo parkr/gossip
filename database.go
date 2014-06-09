@@ -49,7 +49,9 @@ func (db *DB) LatestMessages(limit string) ([]Message, error) {
 
 func (db *DB) InsertMessage(msg Message) (Message, error) {
 	result, err := db.Connection.NamedExec(InsertionQuery, msg.ForInsertion())
+	if err != nil {
+		return msg, err
+	}
 	lastInsertId, _ := result.LastInsertId()
-	msg.Id = int(lastInsertId)
-	return msg, err
+	return db.Find(int(lastInsertId))
 }
