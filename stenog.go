@@ -49,11 +49,11 @@ func fetchLatestMessages(req *http.Request) (int, string) {
 	messages, err := newDB().LatestMessages(limit)
 
 	if err == nil {
-		return 200, messagesResponseMessage(limit, messages)
+		return messagesResponse(limit, messages)
 	} else {
 		fmt.Println("Encountered an error fetching the latest msgs:")
 		log.Fatal(err)
-		return errorMessage(err)
+		return internalErrorResponse(err)
 	}
 }
 
@@ -66,9 +66,9 @@ func storeMessage(msg Message) (int, string) {
 		fmt.Println("Inserted message:", message)
 		msgs := []Message{}
 		msgs = append(msgs, message)
-		return 200, messagesResponseMessage("", msgs)
+		return messagesResponse("", msgs)
 	} else {
 		log.Fatal(err)
-		return errorMessage(err)
+		return internalErrorResponse(err)
 	}
 }
