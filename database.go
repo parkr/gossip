@@ -4,6 +4,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	"os"
 )
 
 const (
@@ -15,9 +16,16 @@ type DB struct {
 	Connection *sqlx.DB
 }
 
+func dbUrl() string {
+	username := os.Getenv("GOSSIP_DB_USERNAME")
+	password := os.Getenv("GOSSIP_DB_PASSWORD")
+	dbname := os.Getenv("GOSSIP_DB_DBNAME")
+	return username + ":" + password + "@/" + dbname
+}
+
 func newDB() *DB {
 	db := &DB{}
-	conn, err := sqlx.Connect("mysql", "root@/witness")
+	conn, err := sqlx.Connect("mysql", dbUrl())
 	if err != nil {
 		fmt.Println("CRAP: couldn't connect to the database.")
 		fmt.Println(err)
