@@ -12,8 +12,8 @@ func main() {
 	// Setup Martini
 	m := martini.Classic()
 	m.Get("/", sayHello)
-	m.Get("/api/messages/latest", fetchLatestMessages)
-	m.Post("/api/messages/log", binding.Bind(Message{}), storeMessage)
+	m.Get("/api/messages/latest", TokenAuthHandler(), fetchLatestMessages)
+	m.Post("/api/messages/log", TokenAuthHandler(), binding.Bind(Message{}), storeMessage)
 	m.Run()
 }
 
