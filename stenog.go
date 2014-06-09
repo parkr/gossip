@@ -12,13 +12,31 @@ func main() {
 	// Setup Martini
 	m := martini.Classic()
 	m.Get("/", sayHello)
-	m.Get("/api/messages/latest", TokenAuthHandler(), fetchLatestMessages)
-	m.Post("/api/messages/log", TokenAuthHandler(), binding.Bind(Message{}), storeMessage)
+	m.Group("/api/messages", func(r martini.Router) {
+		r.Get("/(?P<id>[0-9]+)", TokenAuthHandler(), findMessageById)
+		r.Get("/latest", TokenAuthHandler(), fetchLatestMessages)
+		r.Post("/log", TokenAuthHandler(), binding.Bind(Message{}), storeMessage)
+	})
 	m.Run()
 }
 
 func sayHello() string {
 	return "Hello, world"
+}
+
+func findMessageById(params martini.Params) (int, string) {
+	id := params["id"]
+	if id == nil {
+		return errorResponse(400, "You must submit an ID to lookup.")
+	}
+	message, err := newDB().Find(id)
+	if err == nil {
+		return singleMessageResponse(message)
+	} else {
+		fmt.Println("Encountered an error fetching msg id=" + id + ":")
+		log.Fatal(err)
+		return internalErrorResponse(err)
+	}
 }
 
 func fetchLatestMessages(req *http.Request) (int, string) {
