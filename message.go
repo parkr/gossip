@@ -17,8 +17,8 @@ type Message struct {
 	Author     string `form:"author" json:"author" db:"author" binding:"required"`
 	Message    string `form:"message" json:"message" db:"message" binding:"required"`
 	At         string `form:"time" json:"time" db:"at" binding:"required"`
-	CreatedAt  string `db:"created_at"`
-	UpdatedAt  string `db:"updated_at"`
+	CreatedAt  string `json:"created_at" db:"created_at"`
+	UpdatedAt  string `json:"updated_at" db:"updated_at"`
 	unexported string `form:"-"` // skip binding of unexported fields
 }
 
