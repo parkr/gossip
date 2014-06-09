@@ -2,9 +2,10 @@
 
 set -ex
 
-LOGFILE="/usr/local/log/gossip.log"
-BINARY="/usr/local/bin/gossip"
-PIDFILE="/var/run/gossip.pid"
+: ${GOSSIP_LOGFILE:="/usr/local/log/gossip.log"}
+: ${GOSSIP_BINARY:="/usr/local/bin/gossip"}
+: ${GOSSIP_PIDFILE:="/var/run/gossip.pid"}
+: ${GOSSIP_AUTH_TOKEN:=some-token}
 : ${GOSSIP_DB_USERNAME:=root}
 : ${GOSSIP_DB_PASSWORD:=some-password}
 : ${GOSSIP_DB_DBNAME:=witness}
@@ -16,6 +17,7 @@ if test -f ".env"; then
 fi
 
 sudo PORT=7483 \
+  GOSSIP_AUTH_TOKEN="${GOSSIP_AUTH_TOKEN}" \
   GOSSIP_DB_DBNAME="${GOSSIP_DB_DBNAME}" \
   GOSSIP_DB_USERNAME="${GOSSIP_DB_USERNAME}" \
   GOSSIP_DB_PASSWORD="${GOSSIP_DB_PASSWORD}" \
