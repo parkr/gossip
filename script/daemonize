@@ -22,10 +22,10 @@ sudo PORT=7483 \
   GOSSIP_DB_USERNAME="${GOSSIP_DB_USERNAME}" \
   GOSSIP_DB_PASSWORD="${GOSSIP_DB_PASSWORD}" \
   daemonize \
-  -e ${LOGFILE} \
-  -o ${LOGFILE} \
+  -e ${GOSSIP_LOGFILE} \
+  -o ${GOSSIP_LOGFILE} \
   -a \
-  -p ${PIDFILE} \
+  -p ${GOSSIP_PIDFILE} \
   -l /var/lock/subsys/gossip \
   -u nobody \
-  ${BINARY}
+  ${GOSSIP_BINARY}

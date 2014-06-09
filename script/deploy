@@ -1,5 +1,7 @@
 #!/bin/sh
 
+sudo killall gossip
+
 set -ex
 
-sudo killall gossip && script/daemonize && script/log
+script/daemonize && script/log

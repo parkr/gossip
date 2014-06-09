@@ -1,3 +1,9 @@
 #! /bin/bash
 
-tail -f /usr/local/log/gossip.log
+: ${GOSSIP_LOGFILE:="/usr/local/log/gossip.log"}
+
+if test -f ".env"; then
+  source .env
+fi
+
+tail -f ${GOSSIP_LOGFILE}
