@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	InsertionQuery    = "INSERT INTO messages (room, author, message, at) VALUES (:room, :author, :message, :at)"
+	InsertionQuery    = "INSERT INTO messages (room, author, message, at, created_at, updated_at) VALUES (:room, :author, :message, :at, NOW(), NOW())"
 	SelectLatestQuery = "SELECT * FROM messages ORDER BY at DESC LIMIT 0,%s"
 )
 
