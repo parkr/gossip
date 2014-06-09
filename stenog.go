@@ -32,6 +32,7 @@ func fetchLatestMessages(req *http.Request) string {
 	if err == nil {
 		return messagesResponseMessage(limit, messages)
 	} else {
+		fmt.Println("Encountered an error fetching the latest msgs:")
 		fmt.Println(err)
 		return errorMessage(err)
 	}
