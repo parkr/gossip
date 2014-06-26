@@ -33,22 +33,20 @@ func singleMessageResponse(msg Message) (int, string) {
 
 func messagesResponse(limit string, messages []Message) (int, string) {
 	r := &ResponseMessage{
-		"true",
-		200,
-		messages,
-		limit,
-		nil,
+		OK:     "true",
+		Code:   200,
+		Values: messages,
+		Limit:  limit,
 	}
 	return r.MartiniResp()
 }
 
 func errorResponse(code int, err error) (int, string) {
 	r := &ResponseMessage{
-		"false",
-		code,
-		nil,
-		"",
-		err,
+		OK:    "false",
+		Code:  code,
+		Limit: "",
+		Error: err,
 	}
 	return r.MartiniResp()
 }
