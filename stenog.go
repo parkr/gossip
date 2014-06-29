@@ -23,7 +23,7 @@ func main() {
 }
 
 func sayHello() string {
-	return "Hello, world"
+	return "Hello, world\n"
 }
 
 func findMessageById(params martini.Params) (int, string) {
@@ -32,7 +32,9 @@ func findMessageById(params martini.Params) (int, string) {
 		return errorResponse(400, errors.New("You must submit an ID to lookup."))
 	}
 
-	message, err := newDB().Find(id)
+	db := newDB()
+	message, err := db.Find(id)
+	db.Close()
 	if err == nil {
 		return singleMessageResponse(message)
 	} else {
@@ -49,7 +51,9 @@ func fetchLatestMessages(req *http.Request) (int, string) {
 	}
 	fmt.Println("Fetching latest", limit, "messages")
 
-	messages, err := newDB().LatestMessages(limit)
+	db := newDB()
+	messages, err := db.LatestMessages(limit)
+	db.Close()
 
 	if err == nil {
 		return messagesResponse(limit, messages)
@@ -63,7 +67,9 @@ func fetchLatestMessages(req *http.Request) (int, string) {
 func storeMessage(msg Message) (int, string) {
 	fmt.Println("Storing the following message:", msg.String())
 
-	message, err := newDB().InsertMessage(msg)
+	db := newDB()
+	message, err := db.InsertMessage(msg)
+	db.Close()
 
 	if err == nil {
 		fmt.Println("Inserted message:", message)

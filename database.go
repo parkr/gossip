@@ -35,6 +35,10 @@ func newDB() *DB {
 	return db
 }
 
+func (db *DB) Close() error {
+	return db.Connection.DB.Close()
+}
+
 func (db *DB) Find(id int) (Message, error) {
 	msg := Message{}
 	err := db.Connection.Get(&msg, fmt.Sprintf(SelectMessageById, id))
