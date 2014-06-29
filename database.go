@@ -36,7 +36,9 @@ func newDB() *DB {
 }
 
 func (db *DB) Close() error {
-	return db.Connection.DB.Close()
+	err := db.Connection.DB.Close()
+	db.Connection = nil
+	return err
 }
 
 func (db *DB) Find(id int) (Message, error) {
