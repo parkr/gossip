@@ -1,0 +1,28 @@
+#! /bin/bash
+
+set -e
+
+source .env
+
+access() {
+  echo "$3 /api/messages/$1"
+  echo "==============================="
+  time curl http://localhost:7483/api/messages/$1$2
+  echo
+  echo "-------------------------------"
+  echo
+}
+
+unauthorized_access() {
+  access "$1" "" "Unauthorized"
+}
+
+authorized_access() {
+  access "$1" "?access_token=$GOSSIP_AUTH_TOKEN" "Authorized"
+}
+
+authorized_access "latest"
+authorized_access "145"
+
+unauthorized_access "latest"
+unauthorized_access "145"
