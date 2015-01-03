@@ -4,4 +4,4 @@ set -ex
 
 script/bootstrap
 
-go build
+gom build

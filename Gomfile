@@ -1,6 +1,11 @@
 gom 'github.com/mattn/gom'
 gom 'github.com/joho/godotenv', :branch => 'master'
+gom 'github.com/joho/godotenv/autoload', :branch => 'master'
 gom 'github.com/zenazn/goji', :tag => 'v0.8.1'
 gom 'github.com/go-sql-driver/mysql', :branch => 'master'
 gom 'github.com/jmoiron/sqlx', :branch => 'master'
 gom 'github.com/martini-contrib/auth', :branch => 'master'
+
+# test
+gom 'golang.org/x/tools/cmd/cover'
+gom 'golang.org/x/tools/cmd/vet'
