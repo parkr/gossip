@@ -29,6 +29,17 @@ Send a `GET` request to `/api/messages/log`. You can optionally add a `limit=N` 
 }
 ```
 
+## Server Configuration
+
+Some environment variables are required to run the binary:
+
+- `GOSSIP_DB_USERNAME`
+- `GOSSIP_DB_PASSWORD`
+- `GOSSIP_DB_DBNAME`
+- `GOSSIP_AUTH_TOKEN` (used to authenticate api requests from the client)
+
+Optionally, set the `GOSSIP_LOGFILE` when running `script/deploy`.
+
 ## Credits / License
 
 Copyright (c) 2014 Parker Moore (@parkr)
