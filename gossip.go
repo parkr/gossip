@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"regexp"
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/zenazn/goji"
@@ -44,7 +45,8 @@ func main() {
 	h = &Handler{DB: newDB()}
 	goji.Use(TokenAuthHandler)
 	goji.Get("/", h.SayHello)
-	goji.Get("/api/messages/(?P<id>[0-9]+)", h.FindMessageById)
+	pattern := regexp.MustCompile(`^/api/messages/(?P<id>[0-9]+)$`)
+	goji.Get(pattern, h.FindMessageById)
 	//goji.Get("/api/messages/latest", h.FetchLatestMessages)
 	//goji.Post("/api/messages/log", h.StoreMessage)
 	serve()
