@@ -1,37 +1,40 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"github.com/go-martini/martini"
 	"log"
 	"net/http"
 	"strconv"
+
+	"gossip/serializer"
+
+	"github.com/zenazn/goji/web"
 )
 
 type Handler struct {
 	DB *DB
 }
 
-func (h *Handler) SayHello() string {
-	return "Hello, world\n"
+func (h *Handler) SayHello(w http.ResponseWriter, req *http.Request) {
+	fmt.Fprintf(w, "Hello, there.\n")
 }
 
-func (h *Handler) FindMessageById(params martini.Params) (int, string) {
-	id, err := strconv.Atoi(params["id"])
+func (h *Handler) FindMessageById(c web.C, w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(c.URLParams["id"])
 	if err != nil {
-		return errorResponse(400, errors.New("You must submit an ID to lookup."))
+		http.Error(w, "You must submit an ID to lookup.", 400)
+		return
 	}
 
 	message, err := h.DB.Find(id)
 
-	if err == nil {
-		return singleMessageResponse(message)
-	} else {
-		fmt.Println("Encountered an error fetching msg id=" + string(id) + ":")
-		log.Fatal(err)
-		return internalErrorResponse(err)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Could not fetch message id=%d: %s", id, err.Error()), http.StatusInternalServerError)
+		return
 	}
+	fmt.Fprintf(w, serializer.MarshalJson(map[string]interface{}{
+		"messages": message,
+	}))
 }
 
 func (h *Handler) FetchLatestMessages(req *http.Request) (int, string) {
