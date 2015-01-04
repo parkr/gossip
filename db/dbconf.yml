@@ -1,0 +1,6 @@
+test:
+  driver: mysql
+  open: travis@/gossip
+development:
+  driver: mysql
+  open: $GOSSIP_DB_URL

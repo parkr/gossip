@@ -1,6 +1,13 @@
 #!/bin/bash
 
 set -e
+test -f ".env" || cat << EOL > .env
+PORT=7483
+GOSSIP_DB_URL=travis@/gossip
+GOSSIP_DB_USERNAME=travis
+GOSSIP_DB_PASSWORD=
+GOSSIP_DB_DBNAME=gossip
+GOSSIP_AUTH_TOKEN=blah
+EOL
 source .env
-
 true

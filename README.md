@@ -14,7 +14,7 @@ Send a `POST` request to `/api/messages/log` with the following data as a URL-en
     "room": "#jekyll",
     "author": "parkr",
     "message": "hey y'all",
-    "at": "2014-05-20 02:34:14 -0400"
+    "time": "Mon, 02 Jan 2006 15:04:05 MST"
 }
 ```
 

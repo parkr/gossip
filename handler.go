@@ -6,13 +6,20 @@ import (
 	"net/http"
 	"strconv"
 
-	"gossip/serializer"
+	"gossip/database"
+	"gossip/response"
 
 	"github.com/zenazn/goji/web"
 )
 
+var handler *Handler
+
 type Handler struct {
-	DB *DB
+	DB *database.DB
+}
+
+func init() {
+	handler = &Handler{DB: database.New()}
 }
 
 func (h *Handler) SayHello(w http.ResponseWriter, req *http.Request) {
@@ -32,13 +39,11 @@ func (h *Handler) FindMessageById(c web.C, w http.ResponseWriter, r *http.Reques
 		http.Error(w, fmt.Sprintf("Could not fetch message id=%d: %s", id, err.Error()), http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(w, serializer.MarshalJson(map[string]interface{}{
-		"messages": message,
-	}))
+	fmt.Fprintf(w, response.New().WithMessage(message).Json())
 }
 
-func (h *Handler) FetchLatestMessages(req *http.Request) (int, string) {
-	limit := req.URL.Query().Get("limit")
+func (h *Handler) FetchLatestMessages(c web.C, w http.ResponseWriter, r *http.Request) {
+	limit := c.URLParams["limit"]
 	if limit == "" { // no limit
 		limit = "10"
 	}
@@ -46,27 +51,28 @@ func (h *Handler) FetchLatestMessages(req *http.Request) (int, string) {
 
 	messages, err := h.DB.LatestMessages(limit)
 
-	if err == nil {
-		return messagesResponse(limit, messages)
-	} else {
-		fmt.Println("Encountered an error fetching the latest msgs:")
-		log.Fatal(err)
-		return internalErrorResponse(err)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Could not fetch latest messages with limit=%s: %s", limit, err.Error()), http.StatusInternalServerError)
+		return
 	}
+	fmt.Fprintf(w, response.New().WithMessages(messages).WithLimit(limit).Json())
 }
 
-func (h *Handler) StoreMessage(msg Message) (int, string) {
-	fmt.Println("Storing the following message:", msg.String())
+func (h *Handler) StoreMessage(w http.ResponseWriter, r *http.Request) {
+	msg := database.Message{
+		Room:    r.PostFormValue("room"),
+		Author:  r.PostFormValue("author"),
+		Message: r.PostFormValue("message"),
+		At:      r.PostFormValue("time"),
+	}
+
+	log.Println("Storing the following message:", msg.String())
 
 	message, err := h.DB.InsertMessage(msg)
 
-	if err == nil {
-		fmt.Println("Inserted message:", message)
-		msgs := []Message{}
-		msgs = append(msgs, message)
-		return messagesResponse("", msgs)
-	} else {
-		log.Fatal(err)
-		return internalErrorResponse(err)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Could not insert message %s: %s", msg.String(), err.Error()), http.StatusInternalServerError)
+		return
 	}
+	fmt.Fprintf(w, response.New().WithMessage(message).Json())
 }

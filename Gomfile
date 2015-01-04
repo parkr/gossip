@@ -6,6 +6,9 @@ gom 'github.com/go-sql-driver/mysql', :branch => 'master'
 gom 'github.com/jmoiron/sqlx', :branch => 'master'
 gom 'github.com/martini-contrib/auth', :branch => 'master'
 
+# tools
+gom 'bitbucket.org/parkr/goose/cmd/goose', :branch => 'mysql-fix'
+
 # test
 gom 'golang.org/x/tools/cmd/cover'
 gom 'golang.org/x/tools/cmd/vet'

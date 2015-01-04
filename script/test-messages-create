@@ -1,0 +1,7 @@
+#!/bin/bash
+
+DATE=$(date +"%a, %d %b %Y %T %Z")
+DATA="room=%23jekyll&author=Parker%20Moore&message=hello,%20world&time=${DATE}"
+
+curl -d "$DATA" http://localhost:7483/api/messages/log?access_token=blah
+echo

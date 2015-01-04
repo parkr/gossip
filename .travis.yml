@@ -1,3 +1,7 @@
+sudo: false
+cache:
+  directories:
+    - _vendor
 language: go
 go:
   - tip
@@ -5,5 +9,6 @@ before_install:
   - go get github.com/mattn/gom
 install:
   - script/bootstrap
+  - script/goose -env test up
 script:
   - script/cibuild

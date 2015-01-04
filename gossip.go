@@ -11,8 +11,6 @@ import (
 	"github.com/zenazn/goji/graceful"
 )
 
-var h *Handler
-
 func serve() {
 	goji.DefaultMux.Compile()
 	// Install our handler at the root of the standard net/http default mux.
@@ -28,7 +26,7 @@ func serve() {
 	graceful.PostHook(func() {
 		log.Printf("Goji stopped")
 		log.Printf("Shutting down the server")
-		h.DB.Close()
+		handler.DB.Close()
 		log.Printf("Database shut down. Terminating the process.")
 	})
 
@@ -42,12 +40,11 @@ func serve() {
 }
 
 func main() {
-	h = &Handler{DB: newDB()}
 	goji.Use(TokenAuthHandler)
-	goji.Get("/", h.SayHello)
+	goji.Get("/", handler.SayHello)
 	pattern := regexp.MustCompile(`^/api/messages/(?P<id>[0-9]+)$`)
-	goji.Get(pattern, h.FindMessageById)
-	//goji.Get("/api/messages/latest", h.FetchLatestMessages)
-	//goji.Post("/api/messages/log", h.StoreMessage)
+	goji.Get(pattern, handler.FindMessageById)
+	goji.Get("/api/messages/latest", handler.FetchLatestMessages)
+	goji.Post("/api/messages/log", handler.StoreMessage)
 	serve()
 }

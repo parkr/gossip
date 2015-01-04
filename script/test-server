@@ -5,12 +5,31 @@ set -e
 source .env
 
 access() {
-  echo "$3 /api/messages/$1"
+  echo "$3 GET /api/messages/$1"
   echo "==============================="
   time curl http://localhost:7483/api/messages/$1$2
   echo
   echo "-------------------------------"
   echo
+}
+
+post() {
+  echo "$3 POST /api/messages/$1"
+  echo "==============================="
+  set -x
+  time curl -X POST -H 'Content-Type: application/json' -d "$4" http://localhost:7483/api/messages/$1$2
+  set +x
+  echo
+  echo "-------------------------------"
+  echo
+}
+
+unauthorized_post() {
+  post "$1" "" "Unauthorized" "$2"
+}
+
+authorized_post() {
+  post "$1" "?access_token=$GOSSIP_AUTH_TOKEN" "Authorized" "$2"
 }
 
 unauthorized_access() {
@@ -21,8 +40,9 @@ authorized_access() {
   access "$1" "?access_token=$GOSSIP_AUTH_TOKEN" "Authorized"
 }
 
+authorized_post   "log" '{"room": "#jekyll","author": "parkr","message": "hey yall", "at": "Mon, 02 Jan 2006 15:04:05 MST"}'
 authorized_access "latest"
-authorized_access "145"
+authorized_access "1"
 
 unauthorized_access "latest"
-unauthorized_access "145"
+unauthorized_access "1"
