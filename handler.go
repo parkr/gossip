@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
+	"html"
 	"log"
 	"net/http"
 	"strconv"
 
 	"gossip/database"
 	"gossip/response"
+	"gossip/serializer"
 
 	"github.com/zenazn/goji/web"
 )
@@ -59,19 +61,19 @@ func (h *Handler) FetchLatestMessages(c web.C, w http.ResponseWriter, r *http.Re
 }
 
 func (h *Handler) StoreMessage(w http.ResponseWriter, r *http.Request) {
-	msg := database.Message{
-		Room:    r.PostFormValue("room"),
-		Author:  r.PostFormValue("author"),
-		Message: r.PostFormValue("message"),
-		At:      r.PostFormValue("time"),
+	msg := map[string]interface{}{
+		"room":    html.EscapeString(r.PostFormValue("room")),
+		"author":  html.EscapeString(r.PostFormValue("author")),
+		"message": html.EscapeString(r.PostFormValue("message")),
+		"at":      serializer.ParseJavaScriptTime(r.PostFormValue("time")),
 	}
 
-	log.Println("Storing the following message:", msg.String())
+	log.Println("Storing the following message:", msg)
 
 	message, err := h.DB.InsertMessage(msg)
 
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Could not insert message %s: %s", msg.String(), err.Error()), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Could not insert message %s: %s", msg, err.Error()), http.StatusInternalServerError)
 		return
 	}
 	fmt.Fprintf(w, response.New().WithMessage(message).Json())
