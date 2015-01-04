@@ -1,28 +1,23 @@
-#! /bin/bash
+#!/bin/bash
 
 set -e
 
-source .env
+# Make sure we have the correct gom path.
 
-access() {
-  echo "$3 /api/messages/$1"
-  echo "==============================="
-  time curl http://localhost:7483/api/messages/$1$2
-  echo
-  echo "-------------------------------"
-  echo
-}
+cd $(dirname "$0")/..
+gom="$(pwd)/_vendor/bin/gom"
 
-unauthorized_access() {
-  access "$1" "" "Unauthorized"
-}
+# Run the test
 
-authorized_access() {
-  access "$1" "?access_token=$GOSSIP_AUTH_TOKEN" "Authorized"
-}
+if test -z "$1"; then
+  dir="."
+else
+  dir="$1"
+fi
 
-authorized_access "latest"
-authorized_access "145"
-
-unauthorized_access "latest"
-unauthorized_access "145"
+echo "==> Running tests in '${dir}'"
+pushd $dir > /dev/null
+(test -z $(go fmt) && echo -e "PASS\tgo fmt passed.") || (echo -e "FAIL\tgo fmt failed." && exit 1)
+TZ=UTC $gom test -cover
+go vet || (echo -e "FAIL\tgo vet failed." && exit 1)
+popd > /dev/null

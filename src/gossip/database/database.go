@@ -1,10 +1,11 @@
-package main
+package database
 
 import (
 	"fmt"
+	"os"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"os"
 )
 
 const (
@@ -24,15 +25,10 @@ func dbUrl() string {
 	return username + ":" + password + "@/" + dbname
 }
 
-func newDB() *DB {
-	db := &DB{}
-	conn, err := sqlx.Connect("mysql", dbUrl())
-	if err != nil {
-		fmt.Println("CRAP: couldn't connect to the database.")
-		fmt.Println(err)
+func New() *DB {
+	return &DB{
+		Connection: sqlx.MustConnect("mysql", dbUrl()),
 	}
-	db.Connection = conn
-	return db
 }
 
 func (db *DB) Close() error {
@@ -54,6 +50,7 @@ func (db *DB) LatestMessages(limit string) ([]Message, error) {
 }
 
 func (db *DB) InsertMessage(msg Message) (Message, error) {
+	fmt.Println(msg.ForInsertion())
 	result, err := db.Connection.NamedExec(InsertionQuery, msg.ForInsertion())
 	if err != nil {
 		return msg, err

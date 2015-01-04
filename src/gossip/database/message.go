@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"fmt"
@@ -13,10 +13,10 @@ const (
 
 type Message struct {
 	Id         int    `json:"id" db:"id"`
-	Room       string `form:"room" json:"room" db:"room" binding:"required"`
-	Author     string `form:"author" json:"author" db:"author" binding:"required"`
-	Message    string `form:"message" json:"message" db:"message" binding:"required"`
-	At         string `form:"time" json:"time" db:"at" binding:"required"`
+	Room       string `json:"room" db:"room"`
+	Author     string `json:"author" db:"author"`
+	Message    string `json:"message" db:"message"`
+	At         string `json:"time" db:"at"`
 	CreatedAt  string `json:"created_at" db:"created_at"`
 	UpdatedAt  string `json:"updated_at" db:"updated_at"`
 	unexported string `form:"-"` // skip binding of unexported fields
@@ -25,7 +25,7 @@ type Message struct {
 type Messages []*Message
 
 func (msg *Message) String() string {
-	return "<" + msg.Room + " by " + msg.Author + " at " + msg.At + ": " + msg.Message + ">"
+	return fmt.Sprintf("<%s by %s at %s: %s>", msg.Room, msg.Author, msg.At, msg.Message)
 }
 
 func (msg *Message) ForInsertion() map[string]interface{} {

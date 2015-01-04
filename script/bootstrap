@@ -1,9 +1,5 @@
 #! /bin/bash
 
-set -ex
+set -e
 
-echo -e "github.com/codegangsta/martini-contrib/binding \
-github.com/go-martini/martini \
-github.com/martini-contrib/auth \
-github.com/go-sql-driver/mysql \
-github.com/jmoiron/sqlx" | xargs go get
+gom install

@@ -1,0 +1,13 @@
+#!/bin/bash
+source script/setup-env
+set -e
+
+script/test .
+echo
+
+for dir in src/gossip/*; do
+    script/test $dir
+    echo;
+done
+
+script/build
