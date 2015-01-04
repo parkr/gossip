@@ -47,20 +47,6 @@ func TestClose(t *testing.T) {
 	}
 }
 
-func TestFind(t *testing.T) {
-	db := New()
-	defer db.Close()
-
-	msg, err := db.Find(1)
-	if err != nil {
-		t.Fatalf("Close() failed: encountered error '%s'", err)
-	}
-
-	if &msg == nil {
-		t.Fatal("Close() failed: expected a message, got nil")
-	}
-}
-
 func TestLatestMessages(t *testing.T) {
 	db := New()
 	defer db.Close()
@@ -133,5 +119,19 @@ func TestInsertMessageError(t *testing.T) {
 
 	if actual != nil {
 		t.Fatalf("InsertMessage() failed: expected nil, got %s", actual)
+	}
+}
+
+func TestFind(t *testing.T) {
+	db := New()
+	defer db.Close()
+
+	msg, err := db.Find(1)
+	if err != nil {
+		t.Fatalf("Find() failed: encountered error '%s'", err)
+	}
+
+	if &msg == nil {
+		t.Fatal("Find() failed: expected a message, got nil")
 	}
 }
