@@ -9,6 +9,6 @@ before_install:
   - go get github.com/mattn/gom
 install:
   - script/bootstrap
-  - script/goose -env test up
+  - script/setup-database -env test
 script:
   - script/cibuild

@@ -1,3 +1,4 @@
 #!/bin/bash
 
 mysql -e "create database gossip;"
+script/goose $@ up
