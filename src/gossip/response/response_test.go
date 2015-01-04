@@ -42,7 +42,7 @@ func TestWithMessages(t *testing.T) {
 func TestWithMessageWithNoMessages(t *testing.T) {
 	res := New()
 	msg := database.Message{}
-	res.WithMessage(msg)
+	res.WithMessage(&msg)
 	if !reflect.DeepEqual(res.Messages[0], msg) {
 		t.Fatalf("WithMessage() failed: got '%s' instead of %s", &res.Messages[0], msg)
 	}
@@ -51,7 +51,7 @@ func TestWithMessageWithNoMessages(t *testing.T) {
 func TestWithMessageWithOtherMessages(t *testing.T) {
 	res := New().WithMessages([]database.Message{database.Message{Room: "#gossip"}})
 	msg := database.Message{Room: "#github"}
-	res.WithMessage(msg)
+	res.WithMessage(&msg)
 	if !reflect.DeepEqual(res.Messages[1], msg) {
 		t.Fatalf("WithMessage() failed: got '%s' instead of %s", res.Messages[1], msg)
 	}

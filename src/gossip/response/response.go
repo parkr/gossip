@@ -25,11 +25,11 @@ func (r *ResponseMessage) WithMessages(messages []database.Message) *ResponseMes
 	return r
 }
 
-func (r *ResponseMessage) WithMessage(message database.Message) *ResponseMessage {
+func (r *ResponseMessage) WithMessage(message *database.Message) *ResponseMessage {
 	if r.Messages == nil {
-		r.Messages = []database.Message{message}
+		r.Messages = []database.Message{*message}
 	} else {
-		r.Messages = append(r.Messages, message)
+		r.Messages = append(r.Messages, *message)
 	}
 	return r
 }
