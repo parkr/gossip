@@ -3,6 +3,7 @@ package serializer
 import (
 	"encoding/json"
 	"log"
+	"time"
 )
 
 const (
@@ -17,4 +18,18 @@ func MarshalJson(r interface{}) string {
 		return err.Error()
 	}
 	return string(resp_json)
+}
+
+func ParseJavaScriptTime(timeString string) *time.Time {
+	loc, _ := time.LoadLocation("Local")
+	t, err := time.ParseInLocation(JavaScriptTimeFormat, timeString, loc)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	return &t
+}
+
+func TimeToXML(t time.Time) string {
+	return t.Format(HowImUsedToItBeing)
 }
