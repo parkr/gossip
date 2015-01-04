@@ -18,7 +18,7 @@ type DB struct {
 	Connection *sqlx.DB
 }
 
-func dbUrl() string {
+func databaseURL() string {
 	username := os.Getenv("GOSSIP_DB_USERNAME")
 	password := os.Getenv("GOSSIP_DB_PASSWORD")
 	dbname := os.Getenv("GOSSIP_DB_DBNAME")
@@ -27,7 +27,7 @@ func dbUrl() string {
 
 func New() *DB {
 	return &DB{
-		Connection: sqlx.MustConnect("mysql", dbUrl()),
+		Connection: sqlx.MustConnect("mysql", databaseURL()),
 	}
 }
 
@@ -37,9 +37,9 @@ func (db *DB) Close() error {
 	return err
 }
 
-func (db *DB) Find(id int) (Message, error) {
-	msg := Message{}
-	err := db.Connection.Get(&msg, fmt.Sprintf(SelectMessageById, id))
+func (db *DB) Find(id int) (*Message, error) {
+	msg := &Message{}
+	err := db.Connection.Get(msg, fmt.Sprintf(SelectMessageById, id))
 	return msg, err
 }
 
@@ -49,11 +49,11 @@ func (db *DB) LatestMessages(limit string) ([]Message, error) {
 	return messages, err
 }
 
-func (db *DB) InsertMessage(msg Message) (Message, error) {
-	fmt.Println(msg.ForInsertion())
-	result, err := db.Connection.NamedExec(InsertionQuery, msg.ForInsertion())
+func (db *DB) InsertMessage(message map[string]interface{}) (*Message, error) {
+	fmt.Printf("Inserting %s\n", message)
+	result, err := db.Connection.NamedExec(InsertionQuery, message)
 	if err != nil {
-		return msg, err
+		return nil, err
 	}
 	lastInsertId, _ := result.LastInsertId()
 	return db.Find(int(lastInsertId))
