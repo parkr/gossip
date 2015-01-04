@@ -1,6 +1,6 @@
 #! /bin/bash
 
-: ${GOSSIP_LOGFILE:="/usr/local/log/gossip.log"}
+: ${GOSSIP_LOGFILE:="/var/log/gossip.log"}
 
 if test -f ".env"; then
   source .env

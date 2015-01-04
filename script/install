@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
-
 set -ex
-
 script/build
-
-sudo mv gossip /usr/local/bin/gossip
-sudo mkdir -p /usr/local/log
-sudo touch /usr/local/log/gossip.log
-sudo chown nobody:root /usr/local/log/gossip.log
+sudo install -m 0555 gossip /usr/local/bin/gossip
