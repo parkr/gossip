@@ -15,6 +15,11 @@ func New() *ResponseMessage {
 	return &ResponseMessage{}
 }
 
+func (r *ResponseMessage) WithError(err error) *ResponseMessage {
+	r.Error = err
+	return r
+}
+
 func (r *ResponseMessage) WithLimit(limit string) *ResponseMessage {
 	r.Limit = limit
 	return r

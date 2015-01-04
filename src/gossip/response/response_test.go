@@ -3,6 +3,7 @@ package response
 import (
 	"gossip/database"
 
+	"errors"
 	"reflect"
 	"testing"
 )
@@ -11,6 +12,13 @@ func TestNew(t *testing.T) {
 	newResponse := New()
 	if newResponse == nil {
 		t.Fatalf("New() didn't create a new ResponseMessage")
+	}
+}
+
+func TestWithError(t *testing.T) {
+	res := New().WithError(errors.New("Broken."))
+	if res.Error == nil || res.Error.Error() != "Broken." {
+		t.Fatalf("WithError() failed: expected the error to be set, got '%s'", res.Error)
 	}
 }
 
