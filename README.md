@@ -3,6 +3,8 @@ gossip
 
 Fetch &amp; store messages by room, author, and time.
 
+[![Build Status](https://travis-ci.org/parkr/gossip.svg?branch=master)](https://travis-ci.org/parkr/gossip)
+
 ## API
 
 ### Storing messages
