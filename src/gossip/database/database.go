@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -50,7 +51,7 @@ func (db *DB) LatestMessages(limit string) ([]Message, error) {
 }
 
 func (db *DB) InsertMessage(message map[string]interface{}) (*Message, error) {
-	fmt.Printf("Inserting %s\n", message)
+	log.Printf("Inserting %s\n", message)
 	result, err := db.Connection.NamedExec(InsertionQuery, message)
 	if err != nil {
 		return nil, err

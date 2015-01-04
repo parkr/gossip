@@ -49,7 +49,7 @@ func (h *Handler) FetchLatestMessages(c web.C, w http.ResponseWriter, r *http.Re
 	if limit == "" { // no limit
 		limit = "10"
 	}
-	fmt.Println("Fetching latest", limit, "messages")
+	log.Println("Fetching latest", limit, "messages")
 
 	messages, err := h.DB.LatestMessages(limit)
 
