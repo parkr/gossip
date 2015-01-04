@@ -1,7 +1,3 @@
 #!/bin/sh
-
-sudo killall gossip
-
 set -ex
-
-script/daemonize && script/log
+script/install && sudo restart gossip && script/log

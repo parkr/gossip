@@ -1,7 +1,2 @@
 #!/usr/bin/env bash
-
-set -ex
-
-script/bootstrap
-
-gom build
+script/bootstrap && gom build

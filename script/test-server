@@ -16,9 +16,7 @@ access() {
 post() {
   echo "$3 POST /api/messages/$1"
   echo "==============================="
-  set -x
-  time curl -X POST -H 'Content-Type: application/json' -d "$4" http://localhost:7483/api/messages/$1$2
-  set +x
+  time curl -X POST -d "$4" http://localhost:7483/api/messages/$1$2
   echo
   echo "-------------------------------"
   echo
@@ -40,7 +38,9 @@ authorized_access() {
   access "$1" "?access_token=$GOSSIP_AUTH_TOKEN" "Authorized"
 }
 
-authorized_post   "log" '{"room": "#jekyll","author": "parkr","message": "hey yall", "at": "Mon, 02 Jan 2006 15:04:05 MST"}'
+DATE=$(date +"%a, %d %b %Y %T %Z")
+
+authorized_post   "log" "room=%23jekyll&author=parkr&message=hey,%20yall&time=${DATE}"
 authorized_access "latest"
 authorized_access "1"
 
