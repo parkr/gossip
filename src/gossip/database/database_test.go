@@ -43,7 +43,7 @@ func TestClose(t *testing.T) {
 	}
 
 	if db.Connection != nil {
-		t.Fatal("Close() failed: .Connection should be nil, but is '%s'", db.Connection)
+		t.Fatalf("Close() failed: .Connection should be nil, but is '%s'", db.Connection)
 	}
 }
 
