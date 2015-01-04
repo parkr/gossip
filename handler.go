@@ -83,7 +83,7 @@ func (h *Handler) StoreMessage(c web.C, w http.ResponseWriter, r *http.Request) 
 		"at":      serializer.ParseJavaScriptTime(r.PostFormValue("time")),
 	}
 
-	logForReq(c, fmt.Sprintf("Inserting %s:", msg))
+	logForReq(c, fmt.Sprintf("Inserting %s", msg))
 
 	message, err := h.DB.InsertMessage(msg)
 
