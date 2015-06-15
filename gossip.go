@@ -9,6 +9,7 @@ import (
 	"github.com/zenazn/goji"
 	"github.com/zenazn/goji/bind"
 	"github.com/zenazn/goji/graceful"
+	"github.com/zenazn/goji/web"
 )
 
 func serve() {
@@ -40,11 +41,17 @@ func serve() {
 }
 
 func main() {
-	goji.Use(TokenAuthHandler)
 	goji.Get("/", handler.SayHello)
-	pattern := regexp.MustCompile(`^/api/messages/(?P<id>[0-9]+)$`)
-	goji.Get(pattern, handler.FindMessageById)
-	goji.Get("/api/messages/latest", handler.FetchLatestMessages)
-	goji.Post("/api/messages/log", handler.StoreMessage)
+
+	messages := web.New()
+	messages.Use(TokenAuthHandler)
+
+	pattern := regexp.MustCompile(`^(?P<id>[0-9]+)$`)
+	messages.Get(pattern, handler.FindMessageById)
+	messages.Get("/latest", handler.FetchLatestMessages)
+	messages.Post("/log", handler.StoreMessage)
+
+	goji.Handle("/api/messages/*", messages)
+
 	serve()
 }
