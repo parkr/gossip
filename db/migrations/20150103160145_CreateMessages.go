@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -7,7 +6,7 @@ import (
 
 // Up is executed when this migration is applied
 func Up_20150103160145(txn *sql.Tx) {
-    txn.Exec(`
+	txn.Exec(`
     CREATE TABLE messages (
         id int(11) NOT NULL AUTO_INCREMENT,
         room varchar(255) DEFAULT NULL,
