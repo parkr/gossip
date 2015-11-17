@@ -5,7 +5,8 @@ set -e
 script/test .
 echo
 
-for dir in src/gossip/*; do
+dirs=$(ls **/*.go | cut -d/ -f1 | uniq | xargs -I{} echo ./{})
+for dir in $dirs; do
     script/test $dir
     echo;
 done

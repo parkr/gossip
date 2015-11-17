@@ -12,3 +12,7 @@ install:
   - script/setup-database -env test
 script:
   - script/cibuild
+
+branches:
+  only:
+    - master
