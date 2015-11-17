@@ -1,7 +1,7 @@
 package database
 
 import (
-	"gossip/serializer"
+	"github.com/parkr/gossip/serializer"
 
 	"os"
 	"testing"

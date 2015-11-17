@@ -1,7 +1,7 @@
 package response
 
 import (
-	"gossip/database"
+	"github.com/parkr/gossip/database"
 
 	"errors"
 	"reflect"

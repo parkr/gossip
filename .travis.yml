@@ -4,7 +4,7 @@ cache:
     - _vendor
 language: go
 go:
-  - tip
+  - 1.5
 before_install:
   - go get github.com/mattn/gom
 install:
