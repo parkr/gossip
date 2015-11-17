@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"gossip/database"
-	"gossip/response"
-	"gossip/serializer"
+	"github.com/parkr/gossip/database"
+	"github.com/parkr/gossip/response"
+	"github.com/parkr/gossip/serializer"
 
 	"github.com/zenazn/goji/web"
 	"github.com/zenazn/goji/web/middleware"

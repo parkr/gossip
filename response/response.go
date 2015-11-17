@@ -1,8 +1,8 @@
 package response
 
 import (
-	"gossip/database"
-	"gossip/serializer"
+	"github.com/parkr/gossip/database"
+	"github.com/parkr/gossip/serializer"
 )
 
 type ResponseMessage struct {
