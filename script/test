@@ -5,9 +5,8 @@ set -e
 # Make sure we have the correct gom path.
 
 cd $(dirname "$0")/..
-gom="$(pwd)/_vendor/bin/gom"
 
-# Run the test
+# Run the tests
 
 if test -z "$1"; then
   dir="."
@@ -18,6 +17,6 @@ fi
 echo "==> Running tests in '${dir}'"
 pushd $dir > /dev/null
 (test -z $(go fmt) && echo -e "PASS\tgo fmt passed.") || (echo -e "FAIL\tgo fmt failed." && exit 1)
-TZ=UTC $gom test -cover
+TZ=UTC go test -cover
 go vet || (echo -e "FAIL\tgo vet failed." && exit 1)
 popd > /dev/null

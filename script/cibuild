@@ -1,14 +1,2 @@
 #!/bin/bash
-source script/setup-env
-set -e
-
-script/test .
-echo
-
-dirs=$(ls **/*.go | cut -d/ -f1 | uniq | xargs -I{} echo ./{})
-for dir in $dirs; do
-    script/test $dir
-    echo;
-done
-
-script/build
+source script/setup-env && make all
