@@ -1,3 +1,12 @@
 #!/bin/bash
 mysql -e "create database gossip;"
-script/goose $@ up
+mysql -e "CREATE TABLE IF NOT EXISTS messages (
+        id int(11) NOT NULL AUTO_INCREMENT,
+        room varchar(255) DEFAULT NULL,
+        author varchar(255) DEFAULT NULL,
+        message text,
+        at datetime DEFAULT NULL,
+        created_at datetime NOT NULL,
+        updated_at datetime NOT NULL,
+        PRIMARY KEY (id)
+    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;"

@@ -3,18 +3,9 @@
 	"GoVersion": "go1.6",
 	"GodepVersion": "v74",
 	"Packages": [
-		"./...",
-		"bitbucket.org/parkr/goose/cmd/goose"
+		"./..."
 	],
 	"Deps": [
-		{
-			"ImportPath": "bitbucket.org/parkr/goose/cmd/goose",
-			"Rev": "96ab3ae78793ea915daa2bdcd1c8ac2543878c7c"
-		},
-		{
-			"ImportPath": "bitbucket.org/parkr/goose/lib/goose",
-			"Rev": "96ab3ae78793ea915daa2bdcd1c8ac2543878c7c"
-		},
 		{
 			"ImportPath": "github.com/codegangsta/inject",
 			"Comment": "v1.0-rc1-10-g33e0aa1",
@@ -51,28 +42,8 @@
 			"Rev": "4ed13390c0acd2ff4e371e64d8b97c8954138243"
 		},
 		{
-			"ImportPath": "github.com/kylelemons/go-gypsy/yaml",
-			"Comment": "go.weekly.2011-11-02-19-g42fc2c7",
-			"Rev": "42fc2c7ee9b8bd0ff636cd2d7a8c0a49491044c5"
-		},
-		{
-			"ImportPath": "github.com/lib/pq",
-			"Comment": "go1.0-cutoff-107-g4dd446e",
-			"Rev": "4dd446efc17690bc53e154025146f73203b18309"
-		},
-		{
-			"ImportPath": "github.com/lib/pq/oid",
-			"Comment": "go1.0-cutoff-107-g4dd446e",
-			"Rev": "4dd446efc17690bc53e154025146f73203b18309"
-		},
-		{
 			"ImportPath": "github.com/martini-contrib/auth",
 			"Rev": "fa62c19b7ae87da370242054c8beb11af31d327f"
-		},
-		{
-			"ImportPath": "github.com/mattn/go-sqlite3",
-			"Comment": "v1.1.0-69-g38ee283",
-			"Rev": "38ee283dabf11c9cbdb968eebd79b1fa7acbabe6"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji",
@@ -108,21 +79,6 @@
 			"ImportPath": "github.com/zenazn/goji/web/mutil",
 			"Comment": "v0.9.0-34-gbf843a1",
 			"Rev": "bf843a174a08e846246b8945f8a9a853d84a256a"
-		},
-		{
-			"ImportPath": "github.com/ziutek/mymysql/godrv",
-			"Comment": "v1.5.4-15-g8787d55",
-			"Rev": "8787d5581eb63f3f3b447f40c13f8e69e73f1b58"
-		},
-		{
-			"ImportPath": "github.com/ziutek/mymysql/mysql",
-			"Comment": "v1.5.4-15-g8787d55",
-			"Rev": "8787d5581eb63f3f3b447f40c13f8e69e73f1b58"
-		},
-		{
-			"ImportPath": "github.com/ziutek/mymysql/native",
-			"Comment": "v1.5.4-15-g8787d55",
-			"Rev": "8787d5581eb63f3f3b447f40c13f8e69e73f1b58"
 		}
 	]
 }
