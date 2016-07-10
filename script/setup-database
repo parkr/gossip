@@ -1,10 +1,10 @@
 #!/bin/bash
 [ -z "$DBNAME" ] && {
-  echo "Must provide \$DBNAME variable." > &2
+  echo "Must provide \$DBNAME variable." > /dev/stderr
   exit 1
 }
 [ -z "$DBUSER" ] && {
-  echo "Must provide \$DBUSER variable." > &2
+  echo "Must provide \$DBUSER variable." > /dev/stderr
   exit 1
 }
 
