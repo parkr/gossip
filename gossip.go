@@ -42,12 +42,18 @@ func serve() {
 
 func main() {
 	goji.Get("/", handler.SayHello)
+	byRoomPattern := regexp.MustCompile(`^/room/(?P<room>[%a-zA-Z0-9]+)$`)
+	goji.Get(byRoomPattern, handler.FindMessagesByRoom)
+	byAuthorPattern := regexp.MustCompile(`^/messages/by/(?P<author>[a-zA-Z0-9_-]+)$`)
+	goji.Get(byAuthorPattern, handler.FindMessagesByAuthor)
+	messageContextPatther := regexp.MustCompile(`^/messages/(?P<id>[0-9]+)/context$`)
+	goji.Get(messageContextPatther, handler.FindMessageWithContext)
 
 	messages := web.New()
 	messages.Use(TokenAuthHandler)
 
-	pattern := regexp.MustCompile(`^(?P<id>[0-9]+)$`)
-	messages.Get(pattern, handler.FindMessageById)
+	byIDPattern := regexp.MustCompile(`^(?P<id>[0-9]+)$`)
+	messages.Get(byIDPattern, handler.FindMessageById)
 	messages.Get("/latest", handler.FetchLatestMessages)
 	messages.Post("/log", handler.StoreMessage)
 
