@@ -4,9 +4,7 @@ cache:
     - _vendor
 language: go
 go:
-  - 1.5
-before_install:
-  - go get github.com/mattn/gom
+  - 1.6
 install:
   - script/bootstrap
   - script/setup-database -env test

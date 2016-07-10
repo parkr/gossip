@@ -1,3 +1,12 @@
 #!/bin/bash
 
-gom exec ./_vendor/bin/goose $@
+GOOSEPATH="$GOPATH/bin/goose"
+GOOSESRC="bitbucket.org/parkr/goose/cmd/goose"
+
+[ -x "$GOOSEPATH" ] || {
+  go get -d $GOOSESRC
+  (cd "$GOPATH/src/$GOOSESRC" && git checkout mysql-fix)
+  go install $GOOSESRC
+}
+
+"$GOOSEPATH" $@

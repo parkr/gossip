@@ -1,2 +1,2 @@
 #! /bin/bash
-echo "Dependencies are now vendored. Nothing to see here."
+go install ./vendor/...
