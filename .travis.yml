@@ -5,6 +5,8 @@ cache:
 language: go
 go:
   - 1.6
+before_install:
+  - go get -u github.com/tools/godep # travis has an old version
 install:
   - script/bootstrap
   - script/setup-database -env test
