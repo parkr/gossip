@@ -21,3 +21,4 @@ env:
   global:
     - DBNAME=gossip
     - DBUSER=travis
+    - GO15VENDOREXPERIMENT=1 # omg
