@@ -1,2 +1,2 @@
 #! /bin/bash
-make deps
+echo "Dependencies are now vendored. Nothing to see here."
