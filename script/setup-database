@@ -1,6 +1,16 @@
 #!/bin/bash
-mysql -e "create database gossip;"
-mysql -e "CREATE TABLE IF NOT EXISTS messages (
+[ -z "$DBNAME" ] && {
+  echo "Must provide \$DBNAME variable." > &2
+  exit 1
+}
+[ -z "$DBUSER" ] && {
+  echo "Must provide \$DBUSER variable." > &2
+  exit 1
+}
+
+
+mysql -e "create database $DBNAME;"
+mysql -u $DBUSER -e "use $DBNAME; CREATE TABLE IF NOT EXISTS messages (
         id int(11) NOT NULL AUTO_INCREMENT,
         room varchar(255) DEFAULT NULL,
         author varchar(255) DEFAULT NULL,

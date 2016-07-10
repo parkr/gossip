@@ -14,3 +14,8 @@ script:
 branches:
   only:
     - master
+
+env:
+  global:
+    - DBNAME=gossip
+    - DBUSER=travis
