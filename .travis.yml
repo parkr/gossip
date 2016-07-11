@@ -12,8 +12,8 @@ install:
   - script/bootstrap
   - script/setup-database -env test
 script:
-  - godep -d go build
-  - godep -d go test ./...
+  - godep go -d build
+  - godep go -d test ./...
   - script/cibuild
 
 branches:
