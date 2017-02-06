@@ -10,10 +10,10 @@ import (
 func TestDatabaseURL(t *testing.T) {
 	os.Setenv("GOSSIP_DB_USERNAME", "travis")
 	os.Setenv("GOSSIP_DB_PASSWORD", "blah")
-	os.Setenv("GOSSIP_DB_DBNAME", "gossip")
+	os.Setenv("GOSSIP_DB_DBNAME", "gossip_test")
 
 	actual := databaseURL()
-	expected := "travis:blah@/gossip"
+	expected := "travis:blah@/gossip_test"
 	if actual != expected {
 		t.Fatalf("databaseURL() failed: expected '%s', got '%s'", expected, actual)
 	}
@@ -22,7 +22,7 @@ func TestDatabaseURL(t *testing.T) {
 func TestNew(t *testing.T) {
 	os.Setenv("GOSSIP_DB_USERNAME", "root")
 	os.Setenv("GOSSIP_DB_PASSWORD", "")
-	os.Setenv("GOSSIP_DB_DBNAME", "gossip")
+	os.Setenv("GOSSIP_DB_DBNAME", "gossip_test")
 
 	db := New()
 
@@ -30,8 +30,19 @@ func TestNew(t *testing.T) {
 		t.Fatal("New() failed: expected a db, got nil")
 	}
 
-	if db.Connection == nil {
-		t.Fatal("New() failed: expected the connection to exist, got nil")
+	if db.Connection != nil {
+		t.Fatalf("New() failed: expected the connection to be nil, got %+v", db.Connection)
+	}
+}
+
+func TestGetConnection(t *testing.T) {
+	os.Setenv("GOSSIP_DB_USERNAME", "root")
+	os.Setenv("GOSSIP_DB_PASSWORD", "")
+	os.Setenv("GOSSIP_DB_DBNAME", "gossip_test")
+
+	db := New()
+	if db.GetConnection() == nil {
+		t.Fatal("GetConnection() failed: expected the connection to exist, got nil")
 	}
 }
 
@@ -43,7 +54,7 @@ func TestClose(t *testing.T) {
 	}
 
 	if db.Connection != nil {
-		t.Fatalf("Close() failed: .Connection should be nil, but is '%s'", db.Connection)
+		t.Fatalf("Close() failed: .Connection should be nil, but is '%+v'", db.Connection)
 	}
 }
 
