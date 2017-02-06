@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"regexp"
@@ -18,7 +19,7 @@ func serve() {
 	// This allows packages like expvar to continue working as expected.
 	http.Handle("/", goji.DefaultMux)
 
-	listener := bind.Socket(bind.Sniff())
+	listener := bind.Default()
 	log.Println("Starting Goji on", listener.Addr())
 
 	graceful.HandleSignals()
@@ -41,6 +42,8 @@ func serve() {
 }
 
 func main() {
+	flag.Parse()
+
 	goji.Get("/", handler.SayHello)
 
 	messages := web.New()
