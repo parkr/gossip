@@ -1,9 +1,9 @@
 {
 	"ImportPath": "github.com/parkr/gossip",
-	"GoVersion": "go1.6",
-	"GodepVersion": "v74",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v75",
 	"Packages": [
-		"./..."
+		"github.com/parkr/gossip/..."
 	],
 	"Deps": [
 		{
