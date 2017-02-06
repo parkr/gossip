@@ -26,7 +26,8 @@ func databaseURL() string {
 		password := os.Getenv("GOSSIP_DB_PASSWORD")
 		os.Setenv("GOSSIP_DB_PASSWORD", "") // Unset this variable so it doesn't leak.
 		dbname := os.Getenv("GOSSIP_DB_DBNAME")
-		cachedDatabaseURL = username + ":" + password + "@/" + dbname
+		hostname := os.Getenv("GOSSIP_DB_HOSTNAME")
+		cachedDatabaseURL = username + ":" + password + "@" + hostname + "/" + dbname
 	}
 
 	return cachedDatabaseURL
