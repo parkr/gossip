@@ -13,13 +13,13 @@
 		},
 		{
 			"ImportPath": "github.com/go-martini/martini",
-			"Comment": "v1.0-185-gc257c41",
-			"Rev": "c257c412d547ac70fcaf5596c1a50a7cb832c1fc"
+			"Comment": "v1.0-188-g22fa469",
+			"Rev": "22fa46961aabd2665cf3f1343b146d20028f5071"
 		},
 		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
-			"Comment": "v1.2-136-g7a8740a",
-			"Rev": "7a8740a6bd8feb6af5786ab9a9f1513970019d8c"
+			"Comment": "v1.3-2-g2e00b5c",
+			"Rev": "2e00b5cd70399450106cec6431c2e2ce3cae5034"
 		},
 		{
 			"ImportPath": "github.com/jmoiron/sqlx",
@@ -47,38 +47,38 @@
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji",
-			"Comment": "v0.9.0-34-gbf843a1",
-			"Rev": "bf843a174a08e846246b8945f8a9a853d84a256a"
+			"Comment": "v1.0-1-g4d70779",
+			"Rev": "4d7077956293261309684d3cf1af673f773c6819"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji/bind",
-			"Comment": "v0.9.0-34-gbf843a1",
-			"Rev": "bf843a174a08e846246b8945f8a9a853d84a256a"
+			"Comment": "v1.0-1-g4d70779",
+			"Rev": "4d7077956293261309684d3cf1af673f773c6819"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji/graceful",
-			"Comment": "v0.9.0-34-gbf843a1",
-			"Rev": "bf843a174a08e846246b8945f8a9a853d84a256a"
+			"Comment": "v1.0-1-g4d70779",
+			"Rev": "4d7077956293261309684d3cf1af673f773c6819"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji/graceful/listener",
-			"Comment": "v0.9.0-34-gbf843a1",
-			"Rev": "bf843a174a08e846246b8945f8a9a853d84a256a"
+			"Comment": "v1.0-1-g4d70779",
+			"Rev": "4d7077956293261309684d3cf1af673f773c6819"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji/web",
-			"Comment": "v0.9.0-34-gbf843a1",
-			"Rev": "bf843a174a08e846246b8945f8a9a853d84a256a"
+			"Comment": "v1.0-1-g4d70779",
+			"Rev": "4d7077956293261309684d3cf1af673f773c6819"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji/web/middleware",
-			"Comment": "v0.9.0-34-gbf843a1",
-			"Rev": "bf843a174a08e846246b8945f8a9a853d84a256a"
+			"Comment": "v1.0-1-g4d70779",
+			"Rev": "4d7077956293261309684d3cf1af673f773c6819"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji/web/mutil",
-			"Comment": "v0.9.0-34-gbf843a1",
-			"Rev": "bf843a174a08e846246b8945f8a9a853d84a256a"
+			"Comment": "v1.0-1-g4d70779",
+			"Rev": "4d7077956293261309684d3cf1af673f773c6819"
 		}
 	]
 }
