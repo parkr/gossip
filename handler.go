@@ -1,24 +1,18 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"html"
-	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/parkr/gossip/database"
 	"github.com/parkr/gossip/response"
 	"github.com/parkr/gossip/serializer"
-
-	"github.com/zenazn/goji/web"
-	"github.com/zenazn/goji/web/middleware"
 )
-
-func logForReq(c web.C, message string) {
-	log.Printf("[%s] %s", middleware.GetReqID(c), message)
-}
 
 var handler *Handler
 
@@ -30,14 +24,30 @@ func init() {
 	handler = &Handler{DB: database.New()}
 }
 
+func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	switch r.URL.Path {
+	case "/api/messages/latest":
+		handler.FetchLatestMessages(w, r)
+	case "/api/messages/log":
+		handler.StoreMessage(w, r)
+	default:
+		if strings.HasPrefix(r.URL.Path, "/api/messages/") {
+			handler.FindMessageById(w, r)
+		} else {
+			http.Error(w, fmt.Sprintf("404 Not Found: %s", r.URL.Path), http.StatusNotFound)
+		}
+	}
+}
+
 func (h *Handler) SayHello(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "Hello, there.\n")
 }
 
-func (h *Handler) FindMessageById(c web.C, w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(c.URLParams["id"])
+func (h *Handler) FindMessageById(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.TrimPrefix(r.URL.Path, "/api/messages/")
+	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "You must submit an ID to lookup.", 400)
+		http.Error(w, "You must submit a numerical ID to lookup.", 400)
 		return
 	}
 
@@ -51,13 +61,13 @@ func (h *Handler) FindMessageById(c web.C, w http.ResponseWriter, r *http.Reques
 	fmt.Fprintf(w, response.New().WithMessage(message).Json())
 }
 
-func (h *Handler) FetchLatestMessages(c web.C, w http.ResponseWriter, r *http.Request) {
-	limit := c.URLParams["limit"]
+func (h *Handler) FetchLatestMessages(w http.ResponseWriter, r *http.Request) {
+	limit := r.FormValue("limit")
 	if limit == "" { // no limit
 		limit = "10"
 	}
 
-	logForReq(c, fmt.Sprintf("Fetching latest %s messages", limit))
+	logForReq(r, fmt.Sprintf("Fetching latest %s messages", limit))
 
 	messages, err := h.DB.LatestMessages(limit)
 
@@ -69,21 +79,30 @@ func (h *Handler) FetchLatestMessages(c web.C, w http.ResponseWriter, r *http.Re
 	fmt.Fprintf(w, response.New().WithMessages(messages).WithLimit(limit).Json())
 }
 
-func (h *Handler) StoreMessage(c web.C, w http.ResponseWriter, r *http.Request) {
-	room := r.PostFormValue("room")
-	if room == "" {
-		fmt.Fprintf(w, response.New().WithError(errors.New("No room specified. Skipping.")).Json())
-		return
+func (h *Handler) StoreMessage(w http.ResponseWriter, r *http.Request) {
+	var msg map[string]interface{}
+
+	if r.Header.Get("Content-Type") == "application/json" {
+		if err := json.NewDecoder(r.Body).Decode(&msg); err != nil {
+			fmt.Fprintf(w, response.New().WithError(err).Json())
+			return
+		}
+	} else {
+		room := r.PostFormValue("room")
+		if room == "" {
+			fmt.Fprintf(w, response.New().WithError(errors.New("No room specified. Skipping.")).Json())
+			return
+		}
+
+		msg = map[string]interface{}{
+			"room":    html.EscapeString(r.PostFormValue("room")),
+			"author":  html.EscapeString(r.PostFormValue("author")),
+			"message": html.EscapeString(r.PostFormValue("message")),
+			"at":      serializer.ParseJavaScriptTime(r.PostFormValue("time")),
+		}
 	}
 
-	msg := map[string]interface{}{
-		"room":    html.EscapeString(r.PostFormValue("room")),
-		"author":  html.EscapeString(r.PostFormValue("author")),
-		"message": html.EscapeString(r.PostFormValue("message")),
-		"at":      serializer.ParseJavaScriptTime(r.PostFormValue("time")),
-	}
-
-	logForReq(c, fmt.Sprintf("Inserting %s", msg))
+	logForReq(r, fmt.Sprintf("Inserting %+v", msg))
 
 	message, err := h.DB.InsertMessage(msg)
 

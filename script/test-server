@@ -7,7 +7,7 @@ source .env
 access() {
   echo "$3 GET /api/messages/$1"
   echo "==============================="
-  time curl http://localhost:7483/api/messages/$1$2
+  time curl -i http://localhost:7483/api/messages/$1$2
   echo
   echo "-------------------------------"
   echo
@@ -16,7 +16,7 @@ access() {
 post() {
   echo "$3 POST /api/messages/$1"
   echo "==============================="
-  time curl -X POST -d "$4" http://localhost:7483/api/messages/$1$2
+  time curl -i -X POST -d "$4" http://localhost:7483/api/messages/$1$2
   echo
   echo "-------------------------------"
   echo

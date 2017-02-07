@@ -25,10 +25,11 @@ func TokenAuthHandler(h http.Handler) http.Handler {
 			log.Println("Error processing the form:", err)
 		}
 		givenToken := req.Form.Get("access_token")
+		log.Printf("we have %v, req gave us %v", token, givenToken)
 		if req.URL.Path != "/" && !auth.SecureCompare(givenToken, token) {
-			res.Header().Set("WWW-Authenticate", "Basic realm=\"Authorization Required\"")
-			http.Error(res, "Not Authorized", http.StatusUnauthorized)
+			http.Error(res, "401 Not Authorized", http.StatusUnauthorized)
 		} else {
+			log.Println("looks like we're good to go!")
 			h.ServeHTTP(res, req)
 		}
 	}

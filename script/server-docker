@@ -1,0 +1,18 @@
+#!/bin/bash
+. .env
+hostip=$(ip route show 0.0.0.0/0 | grep -Eo 'via \S+' | awk '{ print $2 }')
+if [ -n "$hostip" ]; then
+  $addhostarg="--add-host=mysql:$hostip"
+fi
+
+set -x
+make docker && clear && docker run -it --rm \
+    --publish $PORT:$PORT \
+    $addhostarg \
+    --env GOSSIP_DB_HOSTNAME=$GOSSIP_DB_HOSTNAME \
+    --env GOSSIP_DB_USERNAME=$GOSSIP_DB_USERNAME \
+    --env GOSSIP_DB_PASSWORD=$GOSSIP_DB_PASSWORD \
+    --env GOSSIP_DB_DBNAME=$GOSSIP_DB_DBNAME \
+    --env GOSSIP_AUTH_TOKEN=$GOSSIP_AUTH_TOKEN \
+    gossip \
+    gossip -bind=:$PORT

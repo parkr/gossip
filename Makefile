@@ -4,9 +4,12 @@ build:
 	godep go build
 
 test:
-	godep go test
+	godep go test ./...
 
-docker:
+clean:
+	rm -rf gossip
+
+docker: clean
 	docker build -t gossip:$(shell git rev-parse HEAD) .
 	docker build -t gossip:latest .
 

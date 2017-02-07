@@ -2,59 +2,49 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
-	"regexp"
+	"os"
+	"time"
 
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/zenazn/goji"
-	"github.com/zenazn/goji/bind"
-	"github.com/zenazn/goji/graceful"
-	"github.com/zenazn/goji/web"
 )
 
-func serve() {
-	goji.DefaultMux.Compile()
-	// Install our handler at the root of the standard net/http default mux.
-	// This allows packages like expvar to continue working as expected.
-	http.Handle("/", goji.DefaultMux)
-
-	listener := bind.Default()
-	log.Println("Starting Goji on", listener.Addr())
-
-	graceful.HandleSignals()
-	bind.Ready()
-	graceful.PreHook(func() { log.Printf("Goji received signal, gracefully stopping") })
-	graceful.PostHook(func() {
-		log.Printf("Goji stopped")
-		log.Printf("Shutting down the server")
-		handler.DB.Close()
-		log.Printf("Database shut down. Terminating the process.")
+func loggingMiddleware(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		sniffer := newResponseWriterSniffer(w)
+		logForReq(r, fmt.Sprintf("Started %s %q from %s", r.Method, r.URL.String(), r.RemoteAddr))
+		start := time.Now()
+		h.ServeHTTP(sniffer, r)
+		logForReq(r, fmt.Sprintf("Returning %d in %s", sniffer.Code(), time.Since(start)))
 	})
+}
 
-	err := graceful.Serve(listener, http.DefaultServeMux)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	graceful.Wait()
+func recoverMiddleware(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if err := recover(); err != nil {
+				http.Error(w, fmt.Sprintf("%q", err), http.StatusInternalServerError)
+			}
+		}()
+		h.ServeHTTP(w, r)
+	})
 }
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	var bind string
+	flag.StringVar(&bind, "bind", ":"+port, "Thing the server should bind to when it runs. Usually a port.")
 	flag.Parse()
 
-	goji.Get("/", handler.SayHello)
+	http.Handle("/", recoverMiddleware(requestIDMiddleware(loggingMiddleware(handler))))
 
-	messages := web.New()
-	messages.Use(TokenAuthHandler)
-
-	pattern := regexp.MustCompile(`^(?P<id>[0-9]+)$`)
-	messages.Get(pattern, handler.FindMessageById)
-	messages.Get("/latest", handler.FetchLatestMessages)
-	messages.Post("/log", handler.StoreMessage)
-
-	goji.Handle("/api/messages/*", messages)
-
-	serve()
+	log.Println("Launching gossip on", bind)
+	if err := http.ListenAndServe(bind, nil); err != nil {
+		log.Fatalln("server crashed:", err)
+	}
 }

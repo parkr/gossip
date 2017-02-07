@@ -15,7 +15,7 @@ To run this with Docker, simply:
 ~$ hostip=$(ip route show 0.0.0.0/0 | grep -Eo 'via \S+' | awk '{ print $2 }')
 ~$ docker run -it --rm \
     --publish 8080:8080 \
-    --add-host=mysql:$(hostip) \
+    --add-host=mysql:$hostip \
     --env GOSSIP_DB_HOSTNAME=mysql \
     --env GOSSIP_DB_USERNAME=mysqlusername \
     --env GOSSIP_DB_PASSWORD=mysqlpassword \
