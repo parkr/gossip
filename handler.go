@@ -25,6 +25,16 @@ func init() {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/" {
+		h.SayHello(w, r)
+		return
+	}
+
+	if err := authenticate(r); err != nil {
+		http.Error(w, response.New().WithError(err).Json(), http.StatusUnauthorized)
+		return
+	}
+
 	switch r.URL.Path {
 	case "/api/messages/latest":
 		handler.FetchLatestMessages(w, r)
