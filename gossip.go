@@ -47,4 +47,5 @@ func main() {
 	if err := http.ListenAndServe(bind, nil); err != nil {
 		log.Fatalln("server crashed:", err)
 	}
+	handler.DB.Close()
 }
