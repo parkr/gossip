@@ -11,10 +11,17 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
+func remoteAddr(r *http.Request) string {
+	if val := r.Header.Get("X-Forwarded-For"); val != "" {
+		return val
+	}
+	return r.RemoteAddr
+}
+
 func loggingMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		sniffer := newResponseWriterSniffer(w)
-		logForReq(r, fmt.Sprintf("Started %s %q from %s", r.Method, r.URL.String(), r.RemoteAddr))
+		logForReq(r, fmt.Sprintf("Started %s %q from %s", r.Method, r.URL.String(), remoteAddr(r)))
 		start := time.Now()
 		h.ServeHTTP(sniffer, r)
 		logForReq(r, fmt.Sprintf("Returning %d in %s", sniffer.Code(), time.Since(start)))
