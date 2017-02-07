@@ -4,7 +4,7 @@ build:
 	godep go build
 
 test:
-	godep go test ./...
+	TZ=UTC godep go test ./...
 
 clean:
 	rm -rf gossip

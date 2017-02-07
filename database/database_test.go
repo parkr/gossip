@@ -7,10 +7,15 @@ import (
 	"testing"
 )
 
+func setDatabaseAuthenticationInfo(user, password, dbname string) {
+	cachedDatabaseURL = ""
+	os.Setenv("GOSSIP_DB_USERNAME", user)
+	os.Setenv("GOSSIP_DB_PASSWORD", password)
+	os.Setenv("GOSSIP_DB_DBNAME", dbname)
+}
+
 func TestDatabaseURL(t *testing.T) {
-	os.Setenv("GOSSIP_DB_USERNAME", "travis")
-	os.Setenv("GOSSIP_DB_PASSWORD", "blah")
-	os.Setenv("GOSSIP_DB_DBNAME", "gossip_test")
+	setDatabaseAuthenticationInfo("travis", "blah", "gossip_test")
 
 	actual := databaseURL()
 	expected := "travis:blah@/gossip_test"
@@ -20,9 +25,7 @@ func TestDatabaseURL(t *testing.T) {
 }
 
 func TestNew(t *testing.T) {
-	os.Setenv("GOSSIP_DB_USERNAME", "root")
-	os.Setenv("GOSSIP_DB_PASSWORD", "")
-	os.Setenv("GOSSIP_DB_DBNAME", "gossip_test")
+	setDatabaseAuthenticationInfo("root", "", "gossip_test")
 
 	db := New()
 
@@ -36,9 +39,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestGetConnection(t *testing.T) {
-	os.Setenv("GOSSIP_DB_USERNAME", "root")
-	os.Setenv("GOSSIP_DB_PASSWORD", "")
-	os.Setenv("GOSSIP_DB_DBNAME", "gossip_test")
+	setDatabaseAuthenticationInfo("travis", "", "gossip_test")
 
 	db := New()
 	if db.GetConnection() == nil {
