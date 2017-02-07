@@ -10,8 +10,8 @@ clean:
 	rm -rf gossip
 
 docker: clean
-	docker build -t gossip:$(shell git rev-parse HEAD) .
-	docker build -t gossip:latest .
+	docker build -t parkr/gossip:$(shell git rev-parse HEAD) .
+	docker build -t parkr/gossip:latest .
 
 publish-to-docker:
 	docker push parkr/gossip
