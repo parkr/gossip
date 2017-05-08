@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/parkr/gossip/database"
@@ -14,7 +15,6 @@ var handler *Handler
 type Handler struct {
 	DB *database.DB
 
-	// cache!
 	allRooms []string
 }
 
@@ -24,10 +24,16 @@ func init() {
 
 func (h *Handler) AllRooms() []string {
 	if h.allRooms == nil {
-		var err error
-		h.allRooms, err = h.DB.AllRooms()
-		if err != nil {
-			log.Printf("error fetching rooms: %+v", err)
+		if rooms := os.Getenv("GOSSIP_ROOMS"); rooms != "" {
+			// pull rooms in from the env
+			h.allRooms = strings.Split(rooms, ",")
+		} else {
+			// pull rooms in from the DB
+			var err error
+			h.allRooms, err = h.DB.AllRooms()
+			if err != nil {
+				log.Printf("error fetching rooms: %+v", err)
+			}
 		}
 	}
 

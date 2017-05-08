@@ -9,6 +9,8 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
+	_ "github.com/parkr/gossip/statik"
+	"github.com/rakyll/statik/fs"
 )
 
 func remoteAddr(r *http.Request) string {
@@ -48,7 +50,12 @@ func main() {
 	flag.StringVar(&bind, "bind", ":"+port, "Thing the server should bind to when it runs. Usually a port.")
 	flag.Parse()
 
-	http.Handle("/assets/", recoverMiddleware(requestIDMiddleware(loggingMiddleware(http.FileServer(http.Dir("public"))))))
+	statikFS, err := fs.New()
+	if err != nil {
+		log.Println("error creating statik FS: %+v", err)
+	} else {
+		http.Handle("/assets/", recoverMiddleware(requestIDMiddleware(loggingMiddleware(http.FileServer(statikFS)))))
+	}
 	http.Handle("/", recoverMiddleware(requestIDMiddleware(loggingMiddleware(handler))))
 
 	log.Println("Launching gossip on", bind)
