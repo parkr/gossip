@@ -12,4 +12,4 @@ RUN go version
 RUN CGO_ENABLED=0 go install github.com/parkr/gossip
 
 # Make `gossip` available to the `Dockerfile.release` build
-CMD [ "./gossip" ]
+CMD [ "gossip" ]

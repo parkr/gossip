@@ -11,7 +11,6 @@ clean:
 
 docker: clean
 	docker build -t parkr/gossip:$(shell git rev-parse HEAD) .
-	docker build -t parkr/gossip:latest .
 
 publish-to-docker:
 	docker push parkr/gossip
