@@ -22,6 +22,6 @@ branches:
 
 env:
   global:
-    - DBNAME=gossip
+    - DBNAME=gossip_test
     - DBUSER=travis
     - GO15VENDOREXPERIMENT=1 # omg
