@@ -31,7 +31,15 @@ func (h *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	messages, err := h.DB.ListByFuzzyMessage(query)
+	cacheKey := "search-" + query
+	messages, err := h.FetchAndCacheList(r, cacheKey, func() ([]database.Message, error) {
+		return h.DB.ListByFuzzyMessage(query)
+	})
+
+	if err == sql.ErrNoRows || len(messages) == 0 {
+		http.Error(w, "no results for "+query, http.StatusNotFound)
+		return
+	}
 	if err != nil {
 		fmt.Fprintf(w, "\n\ncouldn't fetch messages: %+v", err)
 		http.Error(w, "couldn't fetch messages", http.StatusInternalServerError)
@@ -64,7 +72,11 @@ func (h *Handler) LatestMessagesByRoom(w http.ResponseWriter, r *http.Request) {
 	}
 	room := ensureLeadingHash(strings.TrimPrefix(unescapedURLPath, "/room/"))
 
-	messages, err := h.DB.LatestMessagesByRoom(room, 20)
+	cacheKey := "messages-by-room-" + room
+	messages, err := h.FetchAndCacheList(r, cacheKey, func() ([]database.Message, error) {
+		return h.DB.LatestMessagesByRoom(room, 20)
+	})
+
 	if err == sql.ErrNoRows || len(messages) == 0 {
 		http.Error(w, "no results for "+room, http.StatusNotFound)
 		return
@@ -74,6 +86,7 @@ func (h *Handler) LatestMessagesByRoom(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "couldn't fetch messages", http.StatusInternalServerError)
 		return
 	}
+
 	data := &template.ListTemplateData{
 		Messages:    messages,
 		Rooms:       h.AllRooms(),
@@ -86,7 +99,12 @@ func (h *Handler) LatestMessagesByRoom(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) LatestMessagesByAuthor(w http.ResponseWriter, r *http.Request) {
 	author := strings.TrimPrefix(r.URL.Path, "/messages/by/")
-	messages, err := h.DB.LatestMessagesByAuthor(author, 20)
+
+	cacheKey := "messages-by-author-" + author
+	messages, err := h.FetchAndCacheList(r, cacheKey, func() ([]database.Message, error) {
+		return h.DB.LatestMessagesByAuthor(author, 20)
+	})
+
 	if err == sql.ErrNoRows || len(messages) == 0 {
 		http.Error(w, "no results for "+author, http.StatusNotFound)
 		return
@@ -96,6 +114,7 @@ func (h *Handler) LatestMessagesByAuthor(w http.ResponseWriter, r *http.Request)
 		http.Error(w, "couldn't fetch messages", http.StatusInternalServerError)
 		return
 	}
+
 	data := &template.ListTemplateData{
 		Messages:      messages,
 		Rooms:         h.AllRooms(),
@@ -119,7 +138,10 @@ func (h *Handler) MessageContext(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	message, err := h.DB.Find(messageID)
+	cacheKey := "message-" + messageIDStr
+	message, err := h.FetchAndCacheGet(r, cacheKey, func() (*database.Message, error) {
+		return h.DB.Find(messageID)
+	})
 	if err == sql.ErrNoRows {
 		http.Error(w, "no message with id "+messageIDStr, http.StatusNotFound)
 		return
@@ -129,13 +151,21 @@ func (h *Handler) MessageContext(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "couldn't fetch message", http.StatusInternalServerError)
 		return
 	}
-	priorMessages, err := h.DB.PriorMessages(message.Room, message.At, limit)
+
+	priorCacheKey := "prior-" + messageIDStr
+	priorMessages, err := h.FetchAndCacheList(r, priorCacheKey, func() ([]database.Message, error) {
+		return h.DB.PriorMessages(message.Room, message.At, limit)
+	})
 	if err != nil && err != sql.ErrNoRows {
 		fmt.Fprintf(w, "\n\ncouldn't fetch prior messages: %+v", err)
 		http.Error(w, "couldn't fetch prior messages", http.StatusInternalServerError)
 		return
 	}
-	subsequentMessages, err := h.DB.SubsequentMessages(message.Room, message.At, limit)
+
+	subsequentCacheKey := "subsequent-" + messageIDStr
+	subsequentMessages, err := h.FetchAndCacheList(r, subsequentCacheKey, func() ([]database.Message, error) {
+		return h.DB.SubsequentMessages(message.Room, message.At, limit)
+	})
 	if err != nil && err != sql.ErrNoRows {
 		fmt.Fprintf(w, "\n\ncouldn't fetch subsequent messages: %+v", err)
 		http.Error(w, "couldn't fetch subsequent messages", http.StatusInternalServerError)

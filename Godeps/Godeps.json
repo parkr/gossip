@@ -46,6 +46,11 @@
 			"Rev": "fa62c19b7ae87da370242054c8beb11af31d327f"
 		},
 		{
+			"ImportPath": "github.com/patrickmn/go-cache",
+			"Comment": "v2.0.0-9-g7ac1518",
+			"Rev": "7ac151875ffb48b9f3ccce9ea20f020b0c1596c8"
+		},
+		{
 			"ImportPath": "github.com/rakyll/statik/fs",
 			"Comment": "v0.1.0-8-g89fe345",
 			"Rev": "89fe3459b5c829c32e89bdff9c43f18aad728f2f"
