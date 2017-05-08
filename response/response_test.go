@@ -23,16 +23,16 @@ func TestWithError(t *testing.T) {
 }
 
 func TestWithLimit(t *testing.T) {
-	res := New().WithLimit("10")
-	if res.Limit != "10" {
-		t.Fatalf("WithLimit() failed: got '%s' instead of 10", res.Limit)
+	res := New().WithLimit(10)
+	if res.Limit != 10 {
+		t.Fatalf("WithLimit() failed: got '%d' instead of 10", res.Limit)
 	}
 }
 
 func TestWithLimitOverriding(t *testing.T) {
-	res := New().WithLimit("10").WithLimit("100")
-	if res.Limit != "100" {
-		t.Fatalf("WithLimit() failed: got '%s' instead of 100", res.Limit)
+	res := New().WithLimit(10).WithLimit(100)
+	if res.Limit != 100 {
+		t.Fatalf("WithLimit() failed: got '%d' instead of 100", res.Limit)
 	}
 }
 
@@ -70,12 +70,12 @@ func TestChaining(t *testing.T) {
 	if res.Messages != nil {
 		t.Fatalf("Default value of .Messages is not nil, but rather '%s'", res.Messages)
 	}
-	if res.Limit != "" {
-		t.Fatalf("Default value of .Limit is not '', but rather '%s'", res.Limit)
+	if res.Limit != 0 {
+		t.Fatalf("Default value of .Limit is not 0, but rather '%d'", res.Limit)
 	}
-	res.WithLimit("5").WithMessages([]database.Message{})
-	if res.Limit != "5" {
-		t.Fatalf("WithLimit() failed: got '%s' instead of 5", res.Limit)
+	res.WithLimit(5).WithMessages([]database.Message{})
+	if res.Limit != 5 {
+		t.Fatalf("WithLimit() failed: got '%d' instead of 5", res.Limit)
 	}
 	if res.Messages == nil {
 		t.Fatalf("WithMessages() failed: got '%s' instead of a new slice", res.Messages)
@@ -83,9 +83,9 @@ func TestChaining(t *testing.T) {
 }
 
 func TestJson(t *testing.T) {
-	res := New().WithLimit("5").WithMessages([]database.Message{})
+	res := New().WithLimit(5).WithMessages([]database.Message{})
 	json := res.Json()
-	expected := `{"messages":[],"limit":"5","error":null}`
+	expected := `{"messages":[],"limit":5,"error":null}`
 	if json != expected {
 		t.Fatalf("Json() failed: got '%s' instead of '%s'", json, expected)
 	}

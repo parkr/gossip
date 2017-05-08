@@ -1,0 +1,116 @@
+html, body {
+  font-family: Verdana, Arial, sans-serif; }
+
+#container {
+  margin: 0 auto; }
+  @media (max-width: 1600px) {
+    #container {
+      width: 50%; } }
+  @media (max-width: 1250px) {
+    #container {
+      width: 70%; } }
+  @media (max-width: 700px) {
+    #container {
+      width: 95%; } }
+
+#header h1 {
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  zoom: 1;
+  *display: inline;
+  margin-right: 3%; }
+#header h2 {
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  zoom: 1;
+  *display: inline;
+  margin-right: 1%; }
+#header form, #header p {
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  zoom: 1;
+  *display: inline; }
+
+#latest_messages, #by_author, #in_query {
+  margin-top: 0; }
+
+pre, code {
+  font-family: Monaco, "Andale Mono", "Courier New", Courier, Lucidatypewriter, Fixed, monospace;
+  width: 100%;
+  overflow: scroll;
+  font-size: 0.8em; }
+
+.message-item {
+  overflow: hidden;
+  *zoom: 1;
+  padding: 1%; }
+  .message-item:nth-child(2n) {
+    background-color: #efefef; }
+  .message-item .link {
+    float: left;
+    margin-right: 1%; }
+    @media (max-width: 1600px) {
+      .message-item .link {
+        width: 1%; } }
+    @media (max-width: 1250px) {
+      .message-item .link {
+        width: 1%; } }
+    @media (max-width: 700px) {
+      .message-item .link {
+        width: 5%; } }
+  .message-item .time-container {
+    float: left;
+    margin-right: 1%; }
+    @media (max-width: 1600px) {
+      .message-item .time-container {
+        width: 22%; } }
+    @media (max-width: 1250px) {
+      .message-item .time-container {
+        width: 22%; } }
+    @media (max-width: 700px) {
+      .message-item .time-container {
+        width: 60%; } }
+  .message-item .author {
+    float: left;
+    margin-right: 1%; }
+    @media (max-width: 1600px) {
+      .message-item .author {
+        width: 18%; } }
+    @media (max-width: 1250px) {
+      .message-item .author {
+        width: 18%; } }
+    @media (max-width: 700px) {
+      .message-item .author {
+        width: 18%; } }
+  .message-item .message {
+    float: left;
+    margin-right: 1%;
+    font-family: Monaco, "Andale Mono", "Courier New", Courier, Lucidatypewriter, Fixed, monospace;
+    overflow: auto; }
+    @media (max-width: 1600px) {
+      .message-item .message {
+        width: 53%; } }
+    @media (max-width: 1250px) {
+      .message-item .message {
+        width: 53%; } }
+    @media (max-width: 700px) {
+      .message-item .message {
+        width: 100%;
+        margin: 2% 0; } }
+
+.main-message {
+  background-color: #faed99; }
+
+.context {
+  margin: 20px 0;
+  font-size: 0.7em; }
+  .context.pre, .context.post {
+    background-color: #efefef; }
+  .context .monospaced {
+    font-family: Monaco, "Andale Mono", "Courier New", Courier, Lucidatypewriter, Fixed, monospace; }

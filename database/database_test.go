@@ -63,7 +63,7 @@ func TestLatestMessages(t *testing.T) {
 	db := New()
 	defer db.Close()
 
-	msgs, err := db.LatestMessages("1")
+	msgs, err := db.LatestMessages(1)
 
 	if err != nil {
 		t.Fatalf("LatestMessages() failed: encountered error '%s'", err)
