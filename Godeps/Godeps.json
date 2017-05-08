@@ -1,7 +1,7 @@
 {
 	"ImportPath": "github.com/parkr/gossip",
 	"GoVersion": "go1.8",
-	"GodepVersion": "v75",
+	"GodepVersion": "v79",
 	"Packages": [
 		"github.com/parkr/gossip/..."
 	],
@@ -18,8 +18,8 @@
 		},
 		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
-			"Comment": "v1.3-2-g2e00b5c",
-			"Rev": "2e00b5cd70399450106cec6431c2e2ce3cae5034"
+			"Comment": "v1.3-6-g9dee4ca",
+			"Rev": "9dee4ca50b83acdf57a35fb9e6fb4be640afa2f3"
 		},
 		{
 			"ImportPath": "github.com/jmoiron/sqlx",
@@ -44,6 +44,11 @@
 		{
 			"ImportPath": "github.com/martini-contrib/auth",
 			"Rev": "fa62c19b7ae87da370242054c8beb11af31d327f"
+		},
+		{
+			"ImportPath": "github.com/rakyll/statik/fs",
+			"Comment": "v0.1.0-8-g89fe345",
+			"Rev": "89fe3459b5c829c32e89bdff9c43f18aad728f2f"
 		}
 	]
 }
