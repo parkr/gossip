@@ -21,6 +21,7 @@ type Handler struct {
 
 	allRooms       []string
 	skippedAuthors []string
+	defaultRoom    string
 }
 
 func init() {
@@ -89,6 +90,13 @@ func (h *Handler) SkippedAuthors() []string {
 		h.skippedAuthors = strings.Split(os.Getenv("GOSSIP_SKIPPED_AUTHORS"), ",")
 	}
 	return h.skippedAuthors
+}
+
+func (h *Handler) DefaultRoom() string {
+	if h.defaultRoom == "" {
+		h.defaultRoom = os.Getenv("GOSSIP_DEFAULT_ROOM") // this should NOT have a hash/pound symbol
+	}
+	return h.defaultRoom
 }
 
 type messagesListFunc func() ([]database.Message, error)

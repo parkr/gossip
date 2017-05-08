@@ -20,8 +20,15 @@ func ensureLeadingHash(room string) string {
 }
 
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
-	newReq, _ := http.NewRequest(r.Method, "/room/%23jekyll", nil)
-	h.LatestMessagesByRoom(w, newReq)
+	oldURL := r.URL
+	r.URL = &url.URL{
+		Scheme: oldURL.Scheme,
+		Opaque: oldURL.Opaque,
+		User:   oldURL.User,
+		Host:   oldURL.Host,
+		Path:   "/room/%23" + h.DefaultRoom(),
+	}
+	h.LatestMessagesByRoom(w, r)
 }
 
 func (h *Handler) Search(w http.ResponseWriter, r *http.Request) {

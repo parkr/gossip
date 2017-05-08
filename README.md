@@ -21,6 +21,8 @@ To run this with Docker, simply:
     --env GOSSIP_DB_PASSWORD=mysqlpassword \
     --env GOSSIP_DB_DBNAME=mysqldbname \
     --env GOSSIP_AUTH_TOKEN=authtokentovalidateclients \
+    --env GOSSIP_ROOMS='#jekyll,#octopress' \
+    --env GOSSIP_DEFAULT_ROOM=jekyll \
     parkr/gossip \
     gossip -bind=:8080
 ```
@@ -60,6 +62,9 @@ Some environment variables are required to connect for proper functionality:
 - `GOSSIP_DB_PASSWORD`
 - `GOSSIP_DB_DBNAME`
 - `GOSSIP_AUTH_TOKEN` (used to authenticate api requests from the client)
+- `GOSSIP_SKIPPED_AUTHORS` (optional, allows you to reject messages from certain authors during logging)
+- `GOSSIP_DEFAULT_ROOM` (default room without hash/pound sign, e.g. for #jekyll IRC room, should be 'jekyll')
+- `GOSSIP_ROOMS` (comma-separated list of rooms with hash/pound signs, e.g. '#jekyll,#octopress')
 
 Optionally, set the `GOSSIP_LOGFILE` when running `script/deploy`.
 
