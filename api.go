@@ -98,6 +98,15 @@ func (h *Handler) StoreMessage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	for _, author := range h.SkippedAuthors() {
+		if msg["author"] == author {
+			logForReq(r, fmt.Sprintf("no messages from %s allowed", author))
+			http.Error(w, response.New().WithError(fmt.Errorf("no messages from %s allowed", author)).Json(), 200)
+			return
+		}
+
+	}
+
 	logForReq(r, fmt.Sprintf("Inserting %+v", msg))
 
 	message, err := h.DB.InsertMessage(msg)

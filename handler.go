@@ -15,7 +15,8 @@ var handler *Handler
 type Handler struct {
 	DB *database.DB
 
-	allRooms []string
+	allRooms       []string
+	skippedAuthors []string
 }
 
 func init() {
@@ -38,6 +39,13 @@ func (h *Handler) AllRooms() []string {
 	}
 
 	return h.allRooms
+}
+
+func (h *Handler) SkippedAuthors() []string {
+	if h.skippedAuthors == nil {
+		h.skippedAuthors = strings.Split(os.Getenv("GOSSIP_SKIPPED_AUTHORS"), ",")
+	}
+	return h.skippedAuthors
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
