@@ -1,0 +1,56 @@
+#!/bin/bash -e
+
+rooms[0]="#jekyll"
+rooms[1]="#octopress"
+rooms[2]="#github"
+random_room() {
+    rand=$[ $RANDOM % 3 ]
+    echo ${rooms[$rand]}
+}
+
+authors[0]="octocat"
+authors[1]="contrib1234"
+authors[2]="the_very_best-"
+authors[3]="ja-y-the-friend-you-need"
+random_author() {
+    rand=$[ $RANDOM % 4 ]
+    echo ${authors[$rand]}
+}
+
+msgs[0]="Spicy jalapeno bacon ipsum dolor amet culpa porchetta brisket proident pariatur, do kielbasa turkey."
+msgs[1]="Enim picanha officia cupidatat shoulder tenderloin."
+msgs[2]="Boudin alcatra nisi mollit ball tip, turducken chicken."
+msgs[3]="Ut pork belly ground round, bacon frankfurter fatback reprehenderit irure ball tip pancetta nostrud kevin qui do."
+msgs[4]="Tail in fugiat qui proident ut nulla boudin laboris enim veniam biltong kevin drumstick."
+msgs[5]="Dolore ham porchetta alcatra leberkas lorem turkey adipisicing ground round officia."
+msgs[6]="Bacon est reprehenderit, turducken salami kevin cupidatat irure shoulder filet mignon dolor commodo strip steak in dolore."
+msgs[7]="Eu excepteur meatloaf officia ullamco aliquip laboris, shoulder tail fatback aute."
+msgs[8]="Dolore frankfurter short loin sirloin in eiusmod."
+msgs[9]="Rump swine incididunt filet mignon biltong t-bone flank cillum."
+msgs[10]="Filet mignon prosciutto sunt exercitation, ham hock ball tip shankle."
+msgs[11]="Shoulder venison voluptate ham hock shankle aliqua kielbasa cow chicken fugiat exercitation magna."
+msgs[12]="Porchetta exercitation filet mignon flank ham hock ground round."
+msgs[13]="Pig ipsum t-bone, alcatra qui hamburger velit."
+msgs[14]="Reprehenderit pork sunt, turkey commodo pork belly spare ribs nisi bacon."
+msgs[15]="Jerky incididunt ut excepteur eu hamburger labore."
+msgs[16]="Anim occaecat sunt andouille, tongue beef do."
+msgs[17]="Ut laboris eiusmod commodo irure."
+msgs[18]="Ut nostrud sirloin reprehenderit esse laboris in ground round dolore voluptate consequat salami drumstick leberkas."
+random_message() {
+    rand=$[ $RANDOM % 19 ]
+    echo ${msgs[$rand]}
+}
+
+port=$RANDOM
+make
+./gossip -bind=:$port &
+pid=$!
+
+for i in `seq 1 75`; do
+    data=$(ruby -r "addressable/uri" -e "uri = Addressable::URI.new; uri.query_values = {access_token: 'blah', room: '$(random_room)', author: '$(random_author)', message: '$(random_message)', time: Time.now.strftime('%a, %d %b %Y %H:%M:%S %Z')}; puts uri.query")
+    echo $data
+    curl -v -X POST -d"$data" http://localhost:$port/api/messages/log
+    sleep 1
+done
+
+kill $pid

@@ -7,7 +7,7 @@ import (
 
 type ResponseMessage struct {
 	Messages []database.Message `json:"messages"`
-	Limit    string             `json:"limit"`
+	Limit    int                `json:"limit"`
 	Error    error              `json:"error"`
 }
 
@@ -20,7 +20,7 @@ func (r *ResponseMessage) WithError(err error) *ResponseMessage {
 	return r
 }
 
-func (r *ResponseMessage) WithLimit(limit string) *ResponseMessage {
+func (r *ResponseMessage) WithLimit(limit int) *ResponseMessage {
 	r.Limit = limit
 	return r
 }

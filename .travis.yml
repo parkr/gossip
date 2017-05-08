@@ -4,7 +4,7 @@ cache:
     - _vendor
 language: go
 go:
-  - 1.6
+  - 1.8
 before_install:
   - go get -u github.com/tools/godep # travis has an old version
   - godep version
@@ -22,6 +22,6 @@ branches:
 
 env:
   global:
-    - DBNAME=gossip
+    - DBNAME=gossip_test
     - DBUSER=travis
     - GO15VENDOREXPERIMENT=1 # omg

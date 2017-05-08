@@ -48,6 +48,7 @@ func main() {
 	flag.StringVar(&bind, "bind", ":"+port, "Thing the server should bind to when it runs. Usually a port.")
 	flag.Parse()
 
+	http.Handle("/assets/", recoverMiddleware(requestIDMiddleware(loggingMiddleware(http.FileServer(http.Dir("public"))))))
 	http.Handle("/", recoverMiddleware(requestIDMiddleware(loggingMiddleware(handler))))
 
 	log.Println("Launching gossip on", bind)

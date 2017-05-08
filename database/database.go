@@ -3,20 +3,29 @@ package database
 import (
 	"fmt"
 	"os"
+	"sort"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
 
 const (
-	InsertionQuery    = "INSERT INTO messages (room, author, message, at, created_at, updated_at) VALUES (:room, :author, :message, :at, NOW(), NOW())"
-	SelectLatestQuery = "SELECT * FROM messages ORDER BY at DESC LIMIT 0,%s"
-	SelectMessageById = "SELECT * FROM messages WHERE id = %d"
+	InsertionQuery                = "INSERT INTO messages (room, author, message, at, created_at, updated_at) VALUES (:room, :author, :message, :at, NOW(), NOW())"
+	SelectAllRoomsQuery           = "SELECT DISTINCT room FROM messages ORDER BY room"
+	SelectLatestQuery             = "SELECT * FROM messages ORDER BY at DESC LIMIT 0,?"
+	SelectLatestByRoomQuery       = "SELECT * FROM messages WHERE room = ? ORDER BY at DESC LIMIT 0,?"
+	SelectLatestByAuthorQuery     = "SELECT * FROM messages WHERE author = ? ORDER BY at DESC LIMIT 0,?"
+	SelectPriorMessagesQuery      = "SELECT * FROM messages WHERE room = ? AND at < ? ORDER BY at DESC LIMIT 0,?"
+	SelectSubsequentMessagesQuery = "SELECT * FROM messages WHERE room = ? AND at > ? ORDER BY at ASC LIMIT 0,?"
+	SelectMessageById             = "SELECT * FROM messages WHERE id = %d"
+	SelectByFuzzyMessageQuery     = "SELECT * FROM messages WHERE message LIKE ? ORDER BY id DESC"
 )
 
 type DB struct {
 	Connection *sqlx.DB
 }
+
+var ErrInvalidQuery = fmt.Errorf("query is invalid")
 
 var cachedDatabaseURL string
 
@@ -55,15 +64,46 @@ func (db *DB) Close() error {
 	return err
 }
 
+func (db *DB) AllRooms() ([]string, error) {
+	allRooms := []string{}
+	err := db.GetConnection().Select(&allRooms, SelectAllRoomsQuery)
+	return allRooms, err
+}
+
 func (db *DB) Find(id int) (*Message, error) {
 	msg := &Message{}
 	err := db.GetConnection().Get(msg, fmt.Sprintf(SelectMessageById, id))
 	return msg, err
 }
 
-func (db *DB) LatestMessages(limit string) ([]Message, error) {
+func (db *DB) PriorMessages(room, at string, limit int) ([]Message, error) {
+	messages := SortableMessages{}
+	err := db.GetConnection().Select(&messages, SelectPriorMessagesQuery, room, at, limit)
+	sort.Stable(messages)
+	return []Message(messages), err
+}
+
+func (db *DB) SubsequentMessages(room, at string, limit int) ([]Message, error) {
 	messages := []Message{}
-	err := db.GetConnection().Select(&messages, fmt.Sprintf(SelectLatestQuery, limit))
+	err := db.GetConnection().Select(&messages, SelectSubsequentMessagesQuery, room, at, limit)
+	return messages, err
+}
+
+func (db *DB) LatestMessages(limit int) ([]Message, error) {
+	messages := []Message{}
+	err := db.GetConnection().Select(&messages, SelectLatestQuery, limit)
+	return messages, err
+}
+
+func (db *DB) LatestMessagesByRoom(room string, limit int) ([]Message, error) {
+	messages := []Message{}
+	err := db.GetConnection().Select(&messages, SelectLatestByRoomQuery, room, limit)
+	return messages, err
+}
+
+func (db *DB) LatestMessagesByAuthor(author string, limit int) ([]Message, error) {
+	messages := []Message{}
+	err := db.GetConnection().Select(&messages, SelectLatestByAuthorQuery, author, limit)
 	return messages, err
 }
 
@@ -74,4 +114,13 @@ func (db *DB) InsertMessage(message map[string]interface{}) (*Message, error) {
 	}
 	lastInsertId, _ := result.LastInsertId()
 	return db.Find(int(lastInsertId))
+}
+
+func (db *DB) ListByFuzzyMessage(searchTerm string) ([]Message, error) {
+	messages := []Message{}
+	if searchTerm == "" {
+		return messages, ErrInvalidQuery
+	}
+	err := db.GetConnection().Select(&messages, SelectByFuzzyMessageQuery, "%"+searchTerm+"%")
+	return messages, err
 }

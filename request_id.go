@@ -59,6 +59,8 @@ func requestID(r *http.Request) string {
 
 func requestIDMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		h.ServeHTTP(w, r.WithContext(contextWithRequestID(r)))
+		newReq := r.WithContext(contextWithRequestID(r))
+		w.Header().Set("X-Request-Id", requestID(newReq))
+		h.ServeHTTP(w, newReq)
 	})
 }
