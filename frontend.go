@@ -78,10 +78,11 @@ func (h *Handler) LatestMessagesByRoom(w http.ResponseWriter, r *http.Request) {
 		unescapedURLPath = r.URL.Path
 	}
 	room := ensureLeadingHash(strings.TrimPrefix(unescapedURLPath, "/room/"))
+	limit := resultsLimit(r)
 
-	cacheKey := "messages-by-room-" + room
+	cacheKey := "messages-by-room-" + room + "-" + fmt.Sprintf("%d", limit)
 	messages, err := h.FetchAndCacheList(r, cacheKey, func() ([]database.Message, error) {
-		return h.DB.LatestMessagesByRoom(room, 20)
+		return h.DB.LatestMessagesByRoom(room, limit)
 	})
 
 	if err == sql.ErrNoRows || len(messages) == 0 {
@@ -106,10 +107,11 @@ func (h *Handler) LatestMessagesByRoom(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) LatestMessagesByAuthor(w http.ResponseWriter, r *http.Request) {
 	author := strings.TrimPrefix(r.URL.Path, "/messages/by/")
+	limit := resultsLimit(r)
 
-	cacheKey := "messages-by-author-" + author
+	cacheKey := "messages-by-author-" + author + "-" + fmt.Sprintf("%d", limit)
 	messages, err := h.FetchAndCacheList(r, cacheKey, func() ([]database.Message, error) {
-		return h.DB.LatestMessagesByAuthor(author, 20)
+		return h.DB.LatestMessagesByAuthor(author, limit)
 	})
 
 	if err == sql.ErrNoRows || len(messages) == 0 {
@@ -189,4 +191,26 @@ func (h *Handler) MessageContext(w http.ResponseWriter, r *http.Request) {
 	if err := template.ShowTemplate.Execute(w, data); err != nil {
 		fmt.Fprintf(w, "\n\n%+v", err)
 	}
+}
+
+// Pulls the limit query parameter from the request
+// and returns default of 20 if blank or non-integer.
+func resultsLimit(r *http.Request) int {
+	limitStr := r.FormValue("limit")
+	if limitStr == "" {
+		return 20
+	}
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		logForReq(r, fmt.Sprintf("Bad limit '%s': %+v", limitStr, err))
+		return 20
+	}
+
+	// Cap limit at a reasonable number for the DB.
+	if limit > 100 {
+		return 100
+	}
+
+	return limit
 }
