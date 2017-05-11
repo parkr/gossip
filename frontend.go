@@ -22,11 +22,15 @@ func ensureLeadingHash(room string) string {
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	oldURL := r.URL
 	r.URL = &url.URL{
-		Scheme: oldURL.Scheme,
-		Opaque: oldURL.Opaque,
-		User:   oldURL.User,
-		Host:   oldURL.Host,
-		Path:   "/room/%23" + h.DefaultRoom(),
+		Scheme:     oldURL.Scheme,
+		Opaque:     oldURL.Opaque,
+		User:       oldURL.User,
+		Host:       oldURL.Host,
+		Path:       "/room/%23" + h.DefaultRoom(),
+		RawPath:    "/room/%23" + h.DefaultRoom(),
+		ForceQuery: oldURL.ForceQuery,
+		RawQuery:   oldURL.RawQuery,
+		Fragment:   oldURL.Fragment,
 	}
 	h.LatestMessagesByRoom(w, r)
 }
