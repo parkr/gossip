@@ -204,7 +204,12 @@ func (h *Handler) MessageContext(w http.ResponseWriter, r *http.Request) {
 // Pulls the limit query parameter from the request
 // and returns default of 20 if blank or non-integer.
 func resultsLimit(r *http.Request) int {
-	limitStr := r.FormValue("limit")
+	values := r.URL.Query()["limit"]
+	if len(values) == 0 {
+		return 20
+	}
+
+	limitStr := values[0]
 	if limitStr == "" {
 		return 20
 	}
