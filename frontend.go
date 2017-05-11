@@ -37,6 +37,10 @@ func (h *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "no search term given", http.StatusBadRequest)
 		return
 	}
+	if len(query) < 3 {
+		http.Error(w, "search term must be 3+ characters long", http.StatusBadRequest)
+		return
+	}
 
 	cacheKey := "search-" + query
 	messages, err := h.FetchAndCacheList(r, cacheKey, func() ([]database.Message, error) {
