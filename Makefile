@@ -1,3 +1,5 @@
+REV=$(shell git rev-parse HEAD)
+
 all: build test
 
 statik:
@@ -13,8 +15,11 @@ test:
 clean:
 	rm -rf gossip
 
-docker: clean statik
-	docker build -t parkr/gossip:$(shell git rev-parse HEAD) .
+docker-build: clean statik
+	docker build -t parkr/gossip:$(REV) .
 
-publish-to-docker:
-	docker push parkr/gossip:$(shell git rev-parse HEAD)
+docker-test: docker-build
+	docker run --rm -it parkr/gossip:$(REV)
+
+docker-publish: docker-build
+	docker push parkr/gossip:$(REV)
