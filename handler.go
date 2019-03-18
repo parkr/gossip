@@ -34,6 +34,11 @@ func init() {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/_health" {
+		h.HealthCheck(w, r)
+		return
+	}
+
 	if r.URL.Path == "/" {
 		h.Index(w, r)
 		return

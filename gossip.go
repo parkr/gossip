@@ -52,7 +52,7 @@ func main() {
 
 	statikFS, err := fs.New()
 	if err != nil {
-		log.Println("error creating statik FS: %+v", err)
+		log.Printf("error creating statik FS: %+v", err)
 	} else {
 		http.Handle("/assets/", recoverMiddleware(requestIDMiddleware(loggingMiddleware(http.FileServer(statikFS)))))
 	}
