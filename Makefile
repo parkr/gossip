@@ -21,5 +21,5 @@ docker-build: clean statik
 docker-test: docker-build
 	docker run --name gossip-test --rm -it parkr/gossip:$(REV)
 
-docker-publish: docker-build
+docker-release: docker-build
 	docker push parkr/gossip:$(REV)
