@@ -7,10 +7,10 @@ statik:
 	statik -src=$(shell pwd)/public
 
 build: statik
-	godep go build
+	go build
 
 test:
-	TZ=UTC godep go test ./...
+	TZ=UTC go test ./...
 
 clean:
 	rm -rf gossip

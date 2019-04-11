@@ -1,21 +1,12 @@
 # Martini  [![wercker status](https://app.wercker.com/status/9b7dbc6e2654b604cd694d191c3d5487/s/master "wercker status")](https://app.wercker.com/project/bykey/9b7dbc6e2654b604cd694d191c3d5487)[![GoDoc](https://godoc.org/github.com/go-martini/martini?status.png)](http://godoc.org/github.com/go-martini/martini)
 
-### **NOTE:** The martini framework is no longer maintained.
-
 Martini is a powerful package for quickly writing modular web applications/services in Golang.
 
 Language Translations:
-* [繁體中文](translations/README_zh_tw.md)
-* [简体中文](translations/README_zh_cn.md)
-* [Português Brasileiro (pt_BR)](translations/README_pt_br.md)
-* [Español](translations/README_es_ES.md)
+* [Simplified Chinese (zh_CN)](translations/README_zh_cn.md)
+* [Simplified Portuguese (PT_br)](translations/README_pt_br.md)
 * [한국어 번역](translations/README_ko_kr.md)
 * [Русский](translations/README_ru_RU.md)
-* [日本語](translations/README_ja_JP.md)
-* [French](translations/README_fr_FR.md)
-* [Turkish](translations/README_tr_TR.md)
-* [German](translations/README_de_DE.md)
-* [Polski](translations/README_pl_PL.md)
 
 ## Getting Started
 
@@ -35,7 +26,7 @@ func main() {
 }
 ~~~
 
-Then install the Martini package (**go 1.1** or greater is required):
+Then install the Martini package (**go 1.1** and greater is required):
 ~~~
 go get github.com/go-martini/martini
 ~~~
@@ -67,7 +58,6 @@ GoDoc [documentation](http://godoc.org/github.com/go-martini/martini)
 * Lots of good handlers/middlewares to use.
 * Great 'out of the box' feature set.
 * **Fully compatible with the [http.HandlerFunc](http://godoc.org/net/http#HandlerFunc) interface.**
-* Default document serving (e.g., for serving AngularJS apps in HTML5 mode).
 
 ## More Middleware
 For more middleware and functionality, check out the repositories in the  [martini-contrib](https://github.com/martini-contrib) organization.
@@ -135,7 +125,6 @@ The following services are included with [martini.Classic()](http://godoc.org/gi
   * [martini.Context](http://godoc.org/github.com/go-martini/martini#Context) - http request context.
   * [martini.Params](http://godoc.org/github.com/go-martini/martini#Params) - `map[string]string` of named params found by route matching.
   * [martini.Routes](http://godoc.org/github.com/go-martini/martini#Routes) - Route helper service.
-  * [martini.Route](http://godoc.org/github.com/go-martini/martini#Route) - Current active route.
   * [http.ResponseWriter](http://godoc.org/net/http/#ResponseWriter) - http Response writer interface.
   * [*http.Request](http://godoc.org/net/http/#Request) - http Request.
 
@@ -262,20 +251,6 @@ You can serve from more directories by adding more [martini.Static](http://godoc
 m.Use(martini.Static("assets")) // serve from the "assets" directory as well
 ~~~
 
-#### Serving a Default Document
-You can specify the URL of a local file to serve when the requested URL is not
-found. You can also specify an exclusion prefix so that certain URLs are ignored.
-This is useful for servers that serve both static files and have additional
-handlers defined (e.g., REST API). When doing so, it's useful to define the
-static handler as a part of the NotFound chain.
-
-The following example serves the `/index.html` file whenever any URL is
-requested that does not match any local file and does not start with `/api/v`:
-~~~ go
-static := martini.Static("assets", martini.StaticOptions{Fallback: "/index.html", Exclude: "/api/v"})
-m.NotFound(static, http.NotFound)
-~~~
-
 ## Middleware Handlers
 Middleware Handlers sit between the incoming http request and the router. In essence they are no different than any other Handler in Martini. You can add a middleware handler to the stack like so:
 ~~~ go
@@ -326,29 +301,18 @@ Some Martini handlers make use of the `martini.Env` global variable to provide s
 
 Start by looking in the [martini-contrib](https://github.com/martini-contrib) projects. If it is not there feel free to contact a martini-contrib team member about adding a new repo to the organization.
 
-* [acceptlang](https://github.com/martini-contrib/acceptlang) - Handler for parsing the `Accept-Language` HTTP header.
-* [accessflags](https://github.com/martini-contrib/accessflags) - Handler to enable Access Control.
 * [auth](https://github.com/martini-contrib/auth) - Handlers for authentication.
 * [binding](https://github.com/martini-contrib/binding) - Handler for mapping/validating a raw request into a structure.
-* [cors](https://github.com/martini-contrib/cors) - Handler that enables CORS support.
-* [csrf](https://github.com/martini-contrib/csrf) - CSRF protection for applications
-* [encoder](https://github.com/martini-contrib/encoder) - Encoder service for rendering data in several formats and content negotiation.
 * [gzip](https://github.com/martini-contrib/gzip) - Handler for adding gzip compress to requests
-* [gorelic](https://github.com/martini-contrib/gorelic) - NewRelic middleware
-* [logstasher](https://github.com/martini-contrib/logstasher) - Middleware that prints logstash-compatible JSON 
-* [method](https://github.com/martini-contrib/method) - HTTP method overriding via Header or form fields.
-* [oauth2](https://github.com/martini-contrib/oauth2) - Handler that provides OAuth 2.0 login for Martini apps. Google Sign-in, Facebook Connect and Github login is supported.
-* [permissions2](https://github.com/xyproto/permissions2) - Handler for keeping track of users, login states and permissions.
 * [render](https://github.com/martini-contrib/render) - Handler that provides a service for easily rendering JSON and HTML templates.
-* [secure](https://github.com/martini-contrib/secure) - Implements a few quick security wins.
+* [acceptlang](https://github.com/martini-contrib/acceptlang) - Handler for parsing the `Accept-Language` HTTP header.
 * [sessions](https://github.com/martini-contrib/sessions) - Handler that provides a Session service.
-* [sessionauth](https://github.com/martini-contrib/sessionauth) - Handler that provides a simple way to make routes require a login, and to handle user logins in the session
-* [strict](https://github.com/martini-contrib/strict) - Strict Mode 
 * [strip](https://github.com/martini-contrib/strip) - URL Prefix stripping.
-* [staticbin](https://github.com/martini-contrib/staticbin) - Handler for serving static files from binary data
-* [throttle](https://github.com/martini-contrib/throttle) - Request rate throttling middleware.
-* [vauth](https://github.com/rafecolton/vauth) - Handlers for vender webhook authentication (currently GitHub and TravisCI)
-* [web](https://github.com/martini-contrib/web) - hoisie web.go's Context
+* [method](https://github.com/martini-contrib/method) - HTTP method overriding via Header or form fields.
+* [secure](https://github.com/martini-contrib/secure) - Implements a few quick security wins.
+* [encoder](https://github.com/martini-contrib/encoder) - Encoder service for rendering data in several formats and content negotiation.
+* [cors](https://github.com/martini-contrib/cors) - Handler that enables CORS support.
+* [oauth2](https://github.com/martini-contrib/oauth2) - Handler that provides OAuth 2.0 login for Martini apps. Google Sign-in, Facebook Connect and Github login is supported.
 
 ### How do I integrate with existing servers?
 
@@ -375,12 +339,12 @@ func init() {
 ### How do I change the port/host?
 
 Martini's `Run` function looks for the PORT and HOST environment variables and uses those. Otherwise Martini will default to localhost:3000.
-To have more flexibility over port and host, use the `martini.RunOnAddr` function instead.
+To have more flexibility over port and host, use the `http.ListenAndServe` function instead.
 
 ~~~ go
   m := martini.Classic()
   // ...
-  m.RunOnAddr(":8080")
+  log.Fatal(http.ListenAndServe(":8080", m))
 ~~~
 
 ### Live code reload?
@@ -389,9 +353,6 @@ To have more flexibility over port and host, use the `martini.RunOnAddr` functio
 
 ## Contributing
 Martini is meant to be kept tiny and clean. Most contributions should end up in a repository in the [martini-contrib](https://github.com/martini-contrib) organization. If you do have a contribution for the core of Martini feel free to put up a Pull Request.
-
-## License
-Martini is distributed by The MIT License, see LICENSE
 
 ## About
 

@@ -18,7 +18,7 @@ func TestNew(t *testing.T) {
 func TestWithError(t *testing.T) {
 	res := New().WithError(errors.New("Broken."))
 	if res.Error == nil || res.Error.Error() != "Broken." {
-		t.Fatalf("WithError() failed: expected the error to be set, got '%s'", res.Error)
+		t.Fatalf("WithError() failed: expected the error to be set, got '%+v'", res.Error)
 	}
 }
 
@@ -43,7 +43,7 @@ func TestWithMessages(t *testing.T) {
 	}
 	res.WithMessages([]database.Message{})
 	if res.Messages == nil {
-		t.Fatalf("WithMessages() failed: got '%s' instead of a new slice", res.Messages)
+		t.Fatalf("WithMessages() failed: got '%+v' instead of a new slice", res.Messages)
 	}
 }
 
@@ -52,7 +52,7 @@ func TestWithMessageWithNoMessages(t *testing.T) {
 	msg := database.Message{}
 	res.WithMessage(&msg)
 	if !reflect.DeepEqual(res.Messages[0], msg) {
-		t.Fatalf("WithMessage() failed: got '%s' instead of %s", &res.Messages[0], msg)
+		t.Fatalf("WithMessage() failed: got '%+v' instead of %+v", &res.Messages[0], msg)
 	}
 }
 
@@ -61,14 +61,14 @@ func TestWithMessageWithOtherMessages(t *testing.T) {
 	msg := database.Message{Room: "#github"}
 	res.WithMessage(&msg)
 	if !reflect.DeepEqual(res.Messages[1], msg) {
-		t.Fatalf("WithMessage() failed: got '%s' instead of %s", res.Messages[1], msg)
+		t.Fatalf("WithMessage() failed: got '%+v' instead of %+v", res.Messages[1], msg)
 	}
 }
 
 func TestChaining(t *testing.T) {
 	res := New()
 	if res.Messages != nil {
-		t.Fatalf("Default value of .Messages is not nil, but rather '%s'", res.Messages)
+		t.Fatalf("Default value of .Messages is not nil, but rather '%+v'", res.Messages)
 	}
 	if res.Limit != 0 {
 		t.Fatalf("Default value of .Limit is not 0, but rather '%d'", res.Limit)
@@ -78,7 +78,7 @@ func TestChaining(t *testing.T) {
 		t.Fatalf("WithLimit() failed: got '%d' instead of 5", res.Limit)
 	}
 	if res.Messages == nil {
-		t.Fatalf("WithMessages() failed: got '%s' instead of a new slice", res.Messages)
+		t.Fatalf("WithMessages() failed: got '%+v' instead of a new slice", res.Messages)
 	}
 }
 

@@ -68,7 +68,7 @@ func (h *Handler) FetchLatestMessages(w http.ResponseWriter, r *http.Request) {
 	messages, err := h.DB.LatestMessages(limit)
 
 	if err != nil {
-		errMsg := fmt.Sprintf("Could not fetch latest messages with limit=%s: %s", limit, err.Error())
+		errMsg := fmt.Sprintf("Could not fetch latest messages with limit=%d: %s", limit, err.Error())
 		http.Error(w, response.New().WithError(errors.New(errMsg)).Json(), 500)
 		return
 	}
