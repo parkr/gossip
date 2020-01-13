@@ -22,6 +22,6 @@ func main() {
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
 		body, _ := ioutil.ReadAll(resp.Body)
-		log.Fatalf("expected 200, got %d: %s", resp.StatusCode, string(body))
+		log.Fatalf("error from %q: expected 200, got %d: %s", url, resp.StatusCode, string(body))
 	}
 }
