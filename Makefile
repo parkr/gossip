@@ -2,11 +2,13 @@ REV:=$(shell git rev-parse HEAD)
 
 all: build test
 
-mod:
+mod-download:
 	go mod download
 
-statik: mod
-	statik || go install github.com/rakyll/statik
+tools: mod-download
+	cat tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
+
+statik: tools
 	statik -src=$(shell pwd)/public
 
 build: statik
