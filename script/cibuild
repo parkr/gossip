@@ -7,6 +7,4 @@ docker_compose_down() {
 trap docker_compose_down EXIT
 
 docker-compose up -d mysql
-docker-compose logs mysql
-docker ps -a
 docker-compose run ci make all

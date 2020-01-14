@@ -73,6 +73,18 @@ func (db *DB) InitDB(ctx context.Context) error {
 	return err
 }
 
+func (db *DB) Connect(ctx context.Context) (*sqlx.DB, error) {
+	if db.Connection == nil {
+		conn, err := sqlx.ConnectContext(ctx, "mysql", databaseURL())
+		if err != nil {
+			return nil, err
+		}
+		db.Connection = conn
+	}
+
+	return db.Connection, nil
+}
+
 func (db *DB) GetConnection() *sqlx.DB {
 	if db.Connection == nil {
 		db.Connection = sqlx.MustConnect("mysql", databaseURL())

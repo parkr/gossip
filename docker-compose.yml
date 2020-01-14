@@ -25,3 +25,8 @@ services:
         MYSQL_PASSWORD: travis
         MYSQL_DATABASE: gossip_test
         MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
