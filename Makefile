@@ -8,6 +8,7 @@ mod-download:
 tools: mod-download
 	cat tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
 
+.PHONY: statik
 statik: tools
 	statik -src=$(shell pwd)/public
 
@@ -23,7 +24,7 @@ test: pretest
 clean:
 	rm -rf gossip
 
-docker-build: clean statik
+docker-build: clean
 	docker build -t parkr/gossip:$(REV) .
 
 docker-test: docker-build
