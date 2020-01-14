@@ -2,3 +2,4 @@ gin-bin
 /gossip
 .env
 _vendor
+statik/statik.go
