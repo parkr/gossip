@@ -18,7 +18,7 @@ build: statik
 pretest:
 	gossip-db-init
 
-test: pretest
+test: pretest statik
 	TZ=UTC go test ./...
 
 clean:
