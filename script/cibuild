@@ -1,2 +1,10 @@
 #!/bin/bash
-source script/setup-env && make all
+set -ex
+
+docker_compose_down() {
+    docker-compose down -v
+}
+trap docker_compose_down EXIT
+
+docker-compose up -d mysql
+docker-compose run ci make all

@@ -7,26 +7,35 @@ import (
 	"testing"
 )
 
-func setDatabaseAuthenticationInfo(user, password, dbname string) {
+func withDatabaseAuthenticationInfo(user, password, hostname, dbname string, f func()) {
 	cachedDatabaseURL = ""
+	oldGossipDbUsername := os.Getenv("GOSSIP_DB_USERNAME")
 	os.Setenv("GOSSIP_DB_USERNAME", user)
+	oldGossipDbPassword := os.Getenv("GOSSIP_DB_PASSWORD")
 	os.Setenv("GOSSIP_DB_PASSWORD", password)
+	oldGossipDbHostname := os.Getenv("GOSSIP_DB_HOSTNAME")
+	os.Setenv("GOSSIP_DB_HOSTNAME", "")
+	oldGossipDbName := os.Getenv("GOSSIP_DB_DBNAME")
 	os.Setenv("GOSSIP_DB_DBNAME", dbname)
+	f()
+	cachedDatabaseURL = ""
+	os.Setenv("GOSSIP_DB_USERNAME", oldGossipDbUsername)
+	os.Setenv("GOSSIP_DB_PASSWORD", oldGossipDbPassword)
+	os.Setenv("GOSSIP_DB_HOSTNAME", oldGossipDbHostname)
+	os.Setenv("GOSSIP_DB_DBNAME", oldGossipDbName)
 }
 
 func TestDatabaseURL(t *testing.T) {
-	setDatabaseAuthenticationInfo("travis", "blah", "gossip_test")
-
-	actual := databaseURL()
-	expected := "travis:blah@/gossip_test"
-	if actual != expected {
-		t.Fatalf("databaseURL() failed: expected '%s', got '%s'", expected, actual)
-	}
+	withDatabaseAuthenticationInfo("travis", "blah", "", "gossip_test", func() {
+		actual := databaseURL()
+		expected := "travis:blah@/gossip_test"
+		if actual != expected {
+			t.Fatalf("databaseURL() failed: expected '%s', got '%s'", expected, actual)
+		}
+	})
 }
 
 func TestNew(t *testing.T) {
-	setDatabaseAuthenticationInfo("root", "", "gossip_test")
-
 	db := New()
 
 	if db == nil {
@@ -39,8 +48,6 @@ func TestNew(t *testing.T) {
 }
 
 func TestGetConnection(t *testing.T) {
-	setDatabaseAuthenticationInfo("travis", "", "gossip_test")
-
 	db := New()
 	if db.GetConnection() == nil {
 		t.Fatal("GetConnection() failed: expected the connection to exist, got nil")

@@ -1,27 +1,9 @@
-sudo: false
-cache:
-  directories:
-    - _vendor
 language: go
-go:
-  - 1.8
-before_install:
-  - go get -u github.com/tools/godep # travis has an old version
-  - godep version
-install:
-  - script/bootstrap
-  - script/setup-database -env test
-script:
-  - godep go -d build
-  - godep go -d test ./...
-  - script/cibuild
+script: script/cibuild
+
+services:
+  - docker
 
 branches:
   only:
     - master
-
-env:
-  global:
-    - DBNAME=gossip_test
-    - DBUSER=travis
-    - GO15VENDOREXPERIMENT=1 # omg

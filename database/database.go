@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"sort"
@@ -10,6 +11,17 @@ import (
 )
 
 const (
+	InitQuery = `CREATE TABLE IF NOT EXISTS messages (
+        id int(11) NOT NULL AUTO_INCREMENT,
+        room varchar(255) DEFAULT NULL,
+        author varchar(255) DEFAULT NULL,
+        message text,
+        at datetime DEFAULT NULL,
+        created_at datetime NOT NULL,
+        updated_at datetime NOT NULL,
+        PRIMARY KEY (id)
+    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;`
+
 	InsertionQuery                = "INSERT INTO messages (room, author, message, at, created_at, updated_at) VALUES (:room, :author, :message, :at, NOW(), NOW())"
 	SelectAllRoomsQuery           = "SELECT DISTINCT room FROM messages ORDER BY room"
 	SelectLatestQuery             = "SELECT * FROM messages ORDER BY at DESC LIMIT 0,?"
@@ -23,6 +35,8 @@ const (
 
 type DB struct {
 	Connection *sqlx.DB
+
+	allowInit bool
 }
 
 var ErrInvalidQuery = fmt.Errorf("query is invalid")
@@ -44,6 +58,31 @@ func databaseURL() string {
 
 func New() *DB {
 	return &DB{}
+}
+
+func NewWithInit() *DB {
+	return &DB{allowInit: true}
+}
+
+func (db *DB) InitDB(ctx context.Context) error {
+	if !db.allowInit {
+		return fmt.Errorf("this database connection unable to initialize table")
+	}
+
+	_, err := db.GetConnection().ExecContext(ctx, InitQuery)
+	return err
+}
+
+func (db *DB) Connect(ctx context.Context) (*sqlx.DB, error) {
+	if db.Connection == nil {
+		conn, err := sqlx.ConnectContext(ctx, "mysql", databaseURL())
+		if err != nil {
+			return nil, err
+		}
+		db.Connection = conn
+	}
+
+	return db.Connection, nil
 }
 
 func (db *DB) GetConnection() *sqlx.DB {
