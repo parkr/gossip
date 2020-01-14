@@ -11,5 +11,5 @@ require (
 	github.com/martini-contrib/auth v0.0.0-20150219114609-fa62c19b7ae8
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/rakyll/statik v0.1.6
-	google.golang.org/appengine v1.5.0
+	google.golang.org/appengine v1.6.5
 )
