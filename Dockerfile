@@ -2,6 +2,7 @@ FROM golang as builder
 WORKDIR /srv/app
 COPY . /srv/app
 RUN go version
+RUN make statik
 RUN CGO_ENABLED=0 go install ./...
 
 FROM scratch
