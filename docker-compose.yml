@@ -16,6 +16,8 @@ services:
         GOSSIP_DB_PASSWORD: travis
         GOSSIP_DB_DBNAME: gossip_test
         GOSSIP_AUTH_TOKEN: blah
+    depends_on:
+    - mysql
   mysql:
     image: "mysql:5.7"
     environment:
