@@ -1,7 +1,8 @@
 FROM golang as builder
-COPY . /go/src/github.com/parkr/gossip
+WORKDIR /srv/app
+COPY . /srv/app
 RUN go version
-RUN CGO_ENABLED=0 go install github.com/parkr/gossip/...
+RUN CGO_ENABLED=0 go install ./...
 
 FROM scratch
 HEALTHCHECK --start-period=1ms --interval=30s --timeout=5s --retries=1 \
