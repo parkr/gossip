@@ -2,8 +2,11 @@ REV:=$(shell git rev-parse HEAD)
 
 all: build test
 
-statik:
-	statik || go get github.com/rakyll/statik
+mod:
+	go mod download
+
+statik: mod
+	statik || go install github.com/rakyll/statik
 	statik -src=$(shell pwd)/public
 
 build: statik
