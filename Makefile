@@ -17,6 +17,7 @@ build: statik
 	go install ./...
 
 pretest:
+	mkdir -p data
 	GOSSIP_DB_PATH=$(GOSSIP_DB_PATH) gossip-db-init
 
 test: pretest statik
