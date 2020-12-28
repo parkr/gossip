@@ -1,9 +1,0 @@
-language: go
-script: script/cibuild
-
-services:
-  - docker
-
-branches:
-  only:
-    - master

@@ -3,9 +3,9 @@ WORKDIR /srv/app
 COPY . /srv/app
 RUN go version
 RUN make statik
-RUN CGO_ENABLED=0 go install ./...
+RUN go install ./...
 
-FROM scratch
+FROM debian:buster-slim
 HEALTHCHECK --start-period=1ms --interval=30s --timeout=5s --retries=1 \
   CMD [ "/bin/gossip-healthcheck" ]
 COPY --from=builder /go/bin/gossip-healthcheck /bin/gossip-healthcheck

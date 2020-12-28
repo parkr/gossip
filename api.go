@@ -1,4 +1,4 @@
-package main
+package gossip
 
 import (
 	"encoding/json"
@@ -48,7 +48,7 @@ func (h *Handler) FindMessageById(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, response.New().WithError(errors.New(errMsg)).Json(), 500)
 		return
 	}
-	fmt.Fprintf(w, response.New().WithMessage(message).Json())
+	fmt.Fprint(w, response.New().WithMessage(message).Json())
 }
 
 func (h *Handler) FetchLatestMessages(w http.ResponseWriter, r *http.Request) {
@@ -58,12 +58,12 @@ func (h *Handler) FetchLatestMessages(w http.ResponseWriter, r *http.Request) {
 		var err error
 		limit, err = strconv.Atoi(limitStr)
 		if err != nil {
-			logForReq(r, fmt.Sprintf("Error parsing limit '%s': %+v", limitStr, err))
+			LogWithRequestID(r, fmt.Sprintf("Error parsing limit '%s': %+v", limitStr, err))
 			limit = 10
 		}
 	}
 
-	logForReq(r, fmt.Sprintf("Fetching latest %d messages", limit))
+	LogWithRequestID(r, fmt.Sprintf("Fetching latest %d messages", limit))
 
 	messages, err := h.DB.LatestMessages(limit)
 
@@ -72,7 +72,7 @@ func (h *Handler) FetchLatestMessages(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, response.New().WithError(errors.New(errMsg)).Json(), 500)
 		return
 	}
-	fmt.Fprintf(w, response.New().WithMessages(messages).WithLimit(limit).Json())
+	fmt.Fprint(w, response.New().WithMessages(messages).WithLimit(limit).Json())
 }
 
 func (h *Handler) StoreMessage(w http.ResponseWriter, r *http.Request) {
@@ -80,13 +80,13 @@ func (h *Handler) StoreMessage(w http.ResponseWriter, r *http.Request) {
 
 	if r.Header.Get("Content-Type") == "application/json" {
 		if err := json.NewDecoder(r.Body).Decode(&msg); err != nil {
-			fmt.Fprintf(w, response.New().WithError(err).Json())
+			fmt.Fprint(w, response.New().WithError(err).Json())
 			return
 		}
 	} else {
 		room := r.PostFormValue("room")
 		if room == "" {
-			fmt.Fprintf(w, response.New().WithError(errors.New("No room specified. Skipping.")).Json())
+			fmt.Fprint(w, response.New().WithError(errors.New("No room specified. Skipping.")).Json())
 			return
 		}
 
@@ -100,14 +100,14 @@ func (h *Handler) StoreMessage(w http.ResponseWriter, r *http.Request) {
 
 	for _, author := range h.SkippedAuthors() {
 		if msg["author"] == author {
-			logForReq(r, fmt.Sprintf("no messages from %s allowed", author))
+			LogWithRequestID(r, fmt.Sprintf("no messages from %s allowed", author))
 			http.Error(w, response.New().WithError(fmt.Errorf("no messages from %s allowed", author)).Json(), 200)
 			return
 		}
 
 	}
 
-	logForReq(r, fmt.Sprintf("Inserting %+v", msg))
+	LogWithRequestID(r, fmt.Sprintf("Inserting %+v", msg))
 
 	message, err := h.DB.InsertMessage(msg)
 
@@ -116,5 +116,5 @@ func (h *Handler) StoreMessage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, response.New().WithError(errors.New(errMsg)).Json(), 500)
 		return
 	}
-	fmt.Fprintf(w, response.New().WithMessage(message).Json())
+	fmt.Fprint(w, response.New().WithMessage(message).Json())
 }
