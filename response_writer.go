@@ -1,4 +1,4 @@
-package main
+package gossip
 
 import (
 	"net/http"
@@ -10,7 +10,7 @@ type sniffer struct {
 	w http.ResponseWriter
 }
 
-func newResponseWriterSniffer(w http.ResponseWriter) *sniffer {
+func NewResponseWriterSniffer(w http.ResponseWriter) *sniffer {
 	return &sniffer{
 		StatusCode: -1,
 		w:          w,

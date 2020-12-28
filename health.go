@@ -1,4 +1,4 @@
-package main
+package gossip
 
 import "net/http"
 
@@ -13,5 +13,5 @@ func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(`healthy`))
+	_, _ = w.Write([]byte(`healthy`))
 }

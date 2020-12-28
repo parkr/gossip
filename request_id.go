@@ -1,4 +1,4 @@
-package main
+package gossip
 
 import (
 	"context"
@@ -24,7 +24,7 @@ func init() {
 	var buf [12]byte
 	var b64 string
 	for len(b64) < 10 {
-		rand.Read(buf[:])
+		_, _ = rand.Read(buf[:])
 		b64 = base64.StdEncoding.EncodeToString(buf[:])
 		b64 = strings.NewReplacer("+", "", "/", "").Replace(b64)
 	}
@@ -41,7 +41,7 @@ func contextWithRequestID(r *http.Request) context.Context {
 	return context.WithValue(r.Context(), reqIDKey, newRequestID())
 }
 
-func logForReq(r *http.Request, message string) {
+func LogWithRequestID(r *http.Request, message string) {
 	log.Printf("[%s] %s", requestID(r), message)
 }
 
@@ -57,7 +57,7 @@ func requestID(r *http.Request) string {
 	}
 }
 
-func requestIDMiddleware(h http.Handler) http.Handler {
+func RequestIDMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		newReq := r.WithContext(contextWithRequestID(r))
 		w.Header().Set("X-Request-Id", requestID(newReq))

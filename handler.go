@@ -1,4 +1,4 @@
-package main
+package gossip
 
 import (
 	"fmt"
@@ -13,8 +13,6 @@ import (
 	"github.com/parkr/gossip/database"
 )
 
-var handler *Handler
-
 type Handler struct {
 	DB    *database.DB
 	Cache *cache.Cache
@@ -24,8 +22,8 @@ type Handler struct {
 	defaultRoom    string
 }
 
-func init() {
-	handler = &Handler{
+func NewHandler() *Handler {
+	return &Handler{
 		DB: database.New(),
 		// Create a cache with a default expiration time of 5 minutes, and which
 		// purges expired items every 10 minutes
@@ -112,10 +110,10 @@ func (h *Handler) FetchAndCacheList(r *http.Request, key string, f messagesListF
 
 	messagesInterface, found := h.Cache.Get(key)
 	if found {
-		logForReq(r, fmt.Sprintf("Pulling %s results from cache", key))
+		LogWithRequestID(r, fmt.Sprintf("Pulling %s results from cache", key))
 		messages = messagesInterface.([]database.Message)
 	} else {
-		logForReq(r, fmt.Sprintf("Pulling %s results from database, stuffing in cache", key))
+		LogWithRequestID(r, fmt.Sprintf("Pulling %s results from database, stuffing in cache", key))
 		messages, err = f()
 		if err != nil {
 			return messages, err // don't set the cache if there's an error
@@ -134,10 +132,10 @@ func (h *Handler) FetchAndCacheGet(r *http.Request, key string, f messagesGetFun
 
 	messageInterface, found := h.Cache.Get(key)
 	if found {
-		logForReq(r, fmt.Sprintf("Pulling %s result from cache", key))
+		LogWithRequestID(r, fmt.Sprintf("Pulling %s result from cache", key))
 		message = messageInterface.(*database.Message)
 	} else {
-		logForReq(r, fmt.Sprintf("Pulling %s result from database, stuffing in cache", key))
+		LogWithRequestID(r, fmt.Sprintf("Pulling %s result from database, stuffing in cache", key))
 		message, err = f()
 		if err != nil {
 			return message, err // don't set the cache if there's an error

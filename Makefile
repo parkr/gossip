@@ -7,11 +7,11 @@ mod-download:
 	go mod download
 
 tools: mod-download
-	cat tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
+	cat cmd/gossip/tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
 
 .PHONY: statik
 statik: tools
-	statik -src=$(shell pwd)/public
+	statik -f -src=$(shell pwd)/public
 
 build: statik
 	go install ./...

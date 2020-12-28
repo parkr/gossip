@@ -7,6 +7,22 @@ import (
 	"testing"
 )
 
+func prepareDatabase(t *testing.T, db *DB) {
+	if _, err := db.GetConnection().Exec("DELETE FROM messages;"); err != nil {
+		t.Fatalf("couldn't clear table 'messages': %+v", err)
+	}
+
+	mockMessage := map[string]interface{}{
+		"room":    "#foo",
+		"author":  "bar",
+		"message": "Hello, World!",
+		"at":      serializer.ParseJavaScriptTime("Mon, 02 Jan 2006 15:04:05 MST"),
+	}
+	if _, err := db.GetConnection().NamedExec(InsertionQuery, mockMessage); err != nil {
+		t.Fatalf("couldn't insert mock data: %+v", err)
+	}
+}
+
 func withDatabaseAuthenticationInfo(path string, f func()) {
 	oldGossipDbPath := os.Getenv("GOSSIP_DB_PATH")
 	os.Setenv("GOSSIP_DB_PATH", path)
@@ -31,8 +47,8 @@ func TestNew(t *testing.T) {
 		t.Fatal("New() failed: expected a db, got nil")
 	}
 
-	if db.Connection != nil {
-		t.Fatalf("New() failed: expected the connection to be nil, got %+v", db.Connection)
+	if db.Connection == nil {
+		t.Fatal("New() failed: expected the connection not to be nil, got nil")
 	}
 }
 
@@ -58,6 +74,7 @@ func TestClose(t *testing.T) {
 func TestLatestMessages(t *testing.T) {
 	db := New()
 	defer db.Close()
+	prepareDatabase(t, db)
 
 	msgs, err := db.LatestMessages(1)
 
@@ -73,6 +90,7 @@ func TestLatestMessages(t *testing.T) {
 func TestInsertMessage(t *testing.T) {
 	db := New()
 	defer db.Close()
+	prepareDatabase(t, db)
 
 	msg := map[string]interface{}{
 		"room":    "#jekyll",
@@ -112,6 +130,7 @@ func TestInsertMessage(t *testing.T) {
 func TestInsertMessageError(t *testing.T) {
 	db := New()
 	defer db.Close()
+	prepareDatabase(t, db)
 
 	msg := map[string]interface{}{
 		"author":  "parker",
@@ -133,8 +152,11 @@ func TestInsertMessageError(t *testing.T) {
 func TestFind(t *testing.T) {
 	db := New()
 	defer db.Close()
+	prepareDatabase(t, db)
 
-	msg, err := db.Find(1)
+	msgs, _ := db.LatestMessages(1)
+
+	msg, err := db.Find(msgs[0].ID)
 	if err != nil {
 		t.Fatalf("Find() failed: encountered error '%s'", err)
 	}

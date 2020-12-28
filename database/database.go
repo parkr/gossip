@@ -43,7 +43,9 @@ func databaseURL() string {
 }
 
 func New() *DB {
-	return &DB{}
+	db := &DB{}
+	_ = db.InitDB(context.Background())
+	return db
 }
 
 func (db *DB) InitDB(ctx context.Context) error {
@@ -58,7 +60,6 @@ func (db *DB) Connect(ctx context.Context) (*sqlx.DB, error) {
 			return nil, err
 		}
 		db.Connection = conn
-		db.InitDB(ctx)
 	}
 
 	return db.Connection, nil

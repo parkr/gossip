@@ -1,4 +1,4 @@
-package main
+package gossip
 
 import (
 	"database/sql"
@@ -82,7 +82,7 @@ func (h *Handler) Search(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) LatestMessagesByRoom(w http.ResponseWriter, r *http.Request) {
 	unescapedURLPath, err := url.PathUnescape(r.URL.Path)
 	if err != nil {
-		logForReq(r, fmt.Sprintf("Couldn't unescape URL.Path '%s': %+v", r.URL.Path, err))
+		LogWithRequestID(r, fmt.Sprintf("Couldn't unescape URL.Path '%s': %+v", r.URL.Path, err))
 		unescapedURLPath = r.URL.Path
 	}
 	room := ensureLeadingHash(strings.TrimPrefix(unescapedURLPath, "/room/"))
@@ -216,7 +216,7 @@ func resultsLimit(r *http.Request) int {
 
 	limit, err := strconv.Atoi(limitStr)
 	if err != nil {
-		logForReq(r, fmt.Sprintf("Bad limit '%s': %+v", limitStr, err))
+		LogWithRequestID(r, fmt.Sprintf("Bad limit '%s': %+v", limitStr, err))
 		return 20
 	}
 
