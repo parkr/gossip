@@ -6,27 +6,6 @@ services:
     volumes:
     - .:/srv/app
     environment:
-        MYSQL_USER: travis
-        MYSQL_PASSWORD: travis
-        MYSQL_DATABASE: gossip_test
         PORT: 7483
-        GOSSIP_DB_URL: travis:travis@tcp(mysql)/gossip
-        GOSSIP_DB_HOSTNAME: tcp(mysql)
-        GOSSIP_DB_USERNAME: travis
-        GOSSIP_DB_PASSWORD: travis
-        GOSSIP_DB_DBNAME: gossip_test
+        GOSSIP_DB_PATH: ./data/gossip_test.sqlite3
         GOSSIP_AUTH_TOKEN: blah
-    depends_on:
-    - mysql
-  mysql:
-    image: "mysql:5.7"
-    environment:
-        MYSQL_USER: travis
-        MYSQL_PASSWORD: travis
-        MYSQL_DATABASE: gossip_test
-        MYSQL_RANDOM_ROOT_PASSWORD: "yes"
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3

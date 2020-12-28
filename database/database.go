@@ -6,80 +6,59 @@ import (
 	"os"
 	"sort"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const (
 	InitQuery = `CREATE TABLE IF NOT EXISTS messages (
-        id int(11) NOT NULL AUTO_INCREMENT,
+        id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
         room varchar(255) DEFAULT NULL,
         author varchar(255) DEFAULT NULL,
         message text,
         at datetime DEFAULT NULL,
         created_at datetime NOT NULL,
-        updated_at datetime NOT NULL,
-        PRIMARY KEY (id)
-    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;`
+        updated_at datetime NOT NULL
+    );`
 
-	InsertionQuery                = "INSERT INTO messages (room, author, message, at, created_at, updated_at) VALUES (:room, :author, :message, :at, NOW(), NOW())"
+	InsertionQuery                = "INSERT INTO messages (room, author, message, at, created_at, updated_at) VALUES (:room, :author, :message, :at, datetime('now'), datetime('now'))"
 	SelectAllRoomsQuery           = "SELECT DISTINCT room FROM messages ORDER BY room"
 	SelectLatestQuery             = "SELECT * FROM messages ORDER BY at DESC LIMIT 0,?"
 	SelectLatestByRoomQuery       = "SELECT * FROM messages WHERE room = ? ORDER BY at DESC LIMIT 0,?"
 	SelectLatestByAuthorQuery     = "SELECT * FROM messages WHERE author = ? ORDER BY at DESC LIMIT 0,?"
 	SelectPriorMessagesQuery      = "SELECT * FROM messages WHERE room = ? AND at < ? ORDER BY at DESC LIMIT 0,?"
 	SelectSubsequentMessagesQuery = "SELECT * FROM messages WHERE room = ? AND at > ? ORDER BY at ASC LIMIT 0,?"
-	SelectMessageById             = "SELECT * FROM messages WHERE id = %d"
+	SelectMessageByIdQuery        = "SELECT * FROM messages WHERE id = ?"
 	SelectByFuzzyMessageQuery     = "SELECT * FROM messages WHERE message LIKE ? ORDER BY id DESC"
 )
 
 type DB struct {
 	Connection *sqlx.DB
-
-	allowInit bool
 }
 
 var ErrInvalidQuery = fmt.Errorf("query is invalid")
 
-var cachedDatabaseURL string
-
 func databaseURL() string {
-	if cachedDatabaseURL == "" {
-		username := os.Getenv("GOSSIP_DB_USERNAME")
-		password := os.Getenv("GOSSIP_DB_PASSWORD")
-		os.Setenv("GOSSIP_DB_PASSWORD", "") // Unset this variable so it doesn't leak.
-		dbname := os.Getenv("GOSSIP_DB_DBNAME")
-		hostname := os.Getenv("GOSSIP_DB_HOSTNAME")
-		cachedDatabaseURL = username + ":" + password + "@" + hostname + "/" + dbname
-	}
-
-	return cachedDatabaseURL
+	return os.Getenv("GOSSIP_DB_PATH")
 }
 
 func New() *DB {
 	return &DB{}
 }
 
-func NewWithInit() *DB {
-	return &DB{allowInit: true}
-}
-
 func (db *DB) InitDB(ctx context.Context) error {
-	if !db.allowInit {
-		return fmt.Errorf("this database connection unable to initialize table")
-	}
-
 	_, err := db.GetConnection().ExecContext(ctx, InitQuery)
 	return err
 }
 
 func (db *DB) Connect(ctx context.Context) (*sqlx.DB, error) {
 	if db.Connection == nil {
-		conn, err := sqlx.ConnectContext(ctx, "mysql", databaseURL())
+		conn, err := sqlx.ConnectContext(ctx, "sqlite3", databaseURL())
 		if err != nil {
 			return nil, err
 		}
 		db.Connection = conn
+		db.InitDB(ctx)
 	}
 
 	return db.Connection, nil
@@ -87,7 +66,7 @@ func (db *DB) Connect(ctx context.Context) (*sqlx.DB, error) {
 
 func (db *DB) GetConnection() *sqlx.DB {
 	if db.Connection == nil {
-		db.Connection = sqlx.MustConnect("mysql", databaseURL())
+		db.Connection = sqlx.MustConnect("sqlite3", databaseURL())
 	}
 
 	return db.Connection
@@ -111,7 +90,7 @@ func (db *DB) AllRooms() ([]string, error) {
 
 func (db *DB) Find(id int) (*Message, error) {
 	msg := &Message{}
-	err := db.GetConnection().Get(msg, fmt.Sprintf(SelectMessageById, id))
+	err := db.GetConnection().Get(msg, SelectMessageByIdQuery, id)
 	return msg, err
 }
 

@@ -14,7 +14,7 @@ func main() {
 	flag.IntVar(&retries, "retries", 10, "Number of times to retry the connection")
 	flag.Parse()
 
-	db := database.NewWithInit()
+	db := database.New()
 	var err error
 	for i := 1; i <= retries; i++ {
 		log.Printf("attempting to connect (%d/%d)...", i, retries)

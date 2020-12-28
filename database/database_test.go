@@ -7,28 +7,17 @@ import (
 	"testing"
 )
 
-func withDatabaseAuthenticationInfo(user, password, hostname, dbname string, f func()) {
-	cachedDatabaseURL = ""
-	oldGossipDbUsername := os.Getenv("GOSSIP_DB_USERNAME")
-	os.Setenv("GOSSIP_DB_USERNAME", user)
-	oldGossipDbPassword := os.Getenv("GOSSIP_DB_PASSWORD")
-	os.Setenv("GOSSIP_DB_PASSWORD", password)
-	oldGossipDbHostname := os.Getenv("GOSSIP_DB_HOSTNAME")
-	os.Setenv("GOSSIP_DB_HOSTNAME", "")
-	oldGossipDbName := os.Getenv("GOSSIP_DB_DBNAME")
-	os.Setenv("GOSSIP_DB_DBNAME", dbname)
+func withDatabaseAuthenticationInfo(path string, f func()) {
+	oldGossipDbPath := os.Getenv("GOSSIP_DB_PATH")
+	os.Setenv("GOSSIP_DB_PATH", path)
 	f()
-	cachedDatabaseURL = ""
-	os.Setenv("GOSSIP_DB_USERNAME", oldGossipDbUsername)
-	os.Setenv("GOSSIP_DB_PASSWORD", oldGossipDbPassword)
-	os.Setenv("GOSSIP_DB_HOSTNAME", oldGossipDbHostname)
-	os.Setenv("GOSSIP_DB_DBNAME", oldGossipDbName)
+	os.Setenv("GOSSIP_DB_PATH", oldGossipDbPath)
 }
 
 func TestDatabaseURL(t *testing.T) {
-	withDatabaseAuthenticationInfo("travis", "blah", "", "gossip_test", func() {
+	withDatabaseAuthenticationInfo("gossip_test_123.sqlite3", func() {
 		actual := databaseURL()
-		expected := "travis:blah@/gossip_test"
+		expected := "gossip_test_123.sqlite3"
 		if actual != expected {
 			t.Fatalf("databaseURL() failed: expected '%s', got '%s'", expected, actual)
 		}
@@ -76,7 +65,7 @@ func TestLatestMessages(t *testing.T) {
 		t.Fatalf("LatestMessages() failed: encountered error '%s'", err)
 	}
 
-	if &msgs == nil {
+	if msgs == nil {
 		t.Fatal("LatestMessages() failed: expected a []Message, got nil")
 	}
 }
@@ -98,7 +87,7 @@ func TestInsertMessage(t *testing.T) {
 		t.Fatalf("InsertMessage() failed: encountered error '%s'", err)
 	}
 
-	if &actual == nil {
+	if actual == nil {
 		t.Fatal("InsertMessage() failed: expected a Message, got nil")
 	}
 
@@ -114,7 +103,7 @@ func TestInsertMessage(t *testing.T) {
 		t.Fatalf("InsertMessage() failed: expected .Message to be '%s', got '%s'", msg["message"], actual.Message)
 	}
 
-	expectedAt := "2006-01-02 15:04:05"
+	expectedAt := "2006-01-02T15:04:05Z"
 	if actual.At != expectedAt {
 		t.Fatalf("InsertMessage() failed: expected .At to be '%s', got '%s'", expectedAt, actual.At)
 	}

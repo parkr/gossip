@@ -12,14 +12,10 @@ Fetch &amp; store messages by room, author, and time.
 To run this with Docker, simply:
 
 ```console
-~$ hostip=$(ip route show 0.0.0.0/0 | grep -Eo 'via \S+' | awk '{ print $2 }')
 ~$ docker run -it --rm \
     --publish 8080:8080 \
-    --add-host=mysql:$hostip \
-    --env GOSSIP_DB_HOSTNAME=mysql \
-    --env GOSSIP_DB_USERNAME=mysqlusername \
-    --env GOSSIP_DB_PASSWORD=mysqlpassword \
-    --env GOSSIP_DB_DBNAME=mysqldbname \
+    --volume $(pwd)/data:/data:rw \
+    --env GOSSIP_DB_PATH=/data/gossip_production.sqlite3 \
     --env GOSSIP_AUTH_TOKEN=authtokentovalidateclients \
     --env GOSSIP_ROOMS='#jekyll,#octopress' \
     --env GOSSIP_DEFAULT_ROOM=jekyll \
@@ -57,10 +53,7 @@ Send a `GET` request to `/api/messages/log`. You can optionally add a `limit=N` 
 
 Some environment variables are required to connect for proper functionality:
 
-- `GOSSIP_DB_HOSTNAME` (optional)
-- `GOSSIP_DB_USERNAME`
-- `GOSSIP_DB_PASSWORD`
-- `GOSSIP_DB_DBNAME`
+- `GOSSIP_DB_PATH`
 - `GOSSIP_AUTH_TOKEN` (used to authenticate api requests from the client)
 - `GOSSIP_SKIPPED_AUTHORS` (optional, allows you to reject messages from certain authors during logging)
 - `GOSSIP_DEFAULT_ROOM` (default room without hash/pound sign, e.g. for #jekyll IRC room, should be 'jekyll')
