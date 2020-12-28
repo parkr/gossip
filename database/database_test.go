@@ -139,7 +139,7 @@ func TestFind(t *testing.T) {
 		t.Fatalf("Find() failed: encountered error '%s'", err)
 	}
 
-	if &msg == nil {
+	if msg == nil {
 		t.Fatal("Find() failed: expected a message, got nil")
 	}
 }
