@@ -3,13 +3,13 @@ module github.com/parkr/gossip
 go 1.13
 
 require (
-	github.com/codegangsta/inject v0.0.0-20140425184007-37d7f8432a3e // indirect
-	github.com/go-martini/martini v0.0.0-20140519164645-49411a5b6468 // indirect
-	github.com/go-sql-driver/mysql v1.5.0
+	github.com/codegangsta/inject v0.0.0-20150114235600-33e0aa1cb7c0 // indirect
+	github.com/go-martini/martini v0.0.0-20170121215854-22fa46961aab // indirect
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/joho/godotenv v1.3.0
 	github.com/martini-contrib/auth v0.0.0-20150219114609-fa62c19b7ae8
+	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/rakyll/statik v0.1.7
-	github.com/mattn/go-sqlite3 v2.0.3+incompatible
+	google.golang.org/appengine v1.6.7 // indirect
 )
