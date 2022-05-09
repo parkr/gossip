@@ -145,3 +145,15 @@ func (h *Handler) FetchAndCacheGet(r *http.Request, key string, f messagesGetFun
 
 	return message, err
 }
+
+// Set Last-Modified header
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified
+func setLastModifiedAt(w http.ResponseWriter, messages []database.Message) {
+	latestTimestamp := time.Unix(0, 0)
+	for _, message := range messages {
+		if updatedAt := message.GetUpdatedAt(); updatedAt.After(latestTimestamp) {
+			latestTimestamp = updatedAt
+		}
+	}
+	w.Header().Set("Last-Modified", latestTimestamp.Format(time.RFC1123))
+}

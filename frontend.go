@@ -103,6 +103,7 @@ func (h *Handler) LatestMessagesByRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	setLastModifiedAt(w, messages)
 	data := &template.ListTemplateData{
 		Messages:    messages,
 		Rooms:       h.AllRooms(),
@@ -132,6 +133,7 @@ func (h *Handler) LatestMessagesByAuthor(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	setLastModifiedAt(w, messages)
 	data := &template.ListTemplateData{
 		Messages:      messages,
 		Rooms:         h.AllRooms(),
@@ -189,6 +191,7 @@ func (h *Handler) MessageContext(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	setLastModifiedAt(w, subsequentMessages)
 	data := &template.ShowTemplateData{
 		PriorMessages:      priorMessages,
 		Message:            *message,
