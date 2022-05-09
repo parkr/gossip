@@ -1,4 +1,4 @@
-FROM golang as builder
+FROM golang:1.18-buster as builder
 WORKDIR /srv/app
 COPY . /srv/app
 RUN go version
