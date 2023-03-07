@@ -23,6 +23,10 @@ func (msg *Message) CreatedAtRFC3339() string {
 	return sqlTimeToGoTime(msg.CreatedAt).Format(time.RFC3339)
 }
 
+func (msg *Message) GetUpdatedAt() time.Time {
+	return sqlTimeToGoTime(msg.UpdatedAt)
+}
+
 func sqlTimeToGoTime(sqlTime string) time.Time {
 	t, err := time.Parse("2006-01-02T15:04:05Z", sqlTime)
 	if err != nil {
